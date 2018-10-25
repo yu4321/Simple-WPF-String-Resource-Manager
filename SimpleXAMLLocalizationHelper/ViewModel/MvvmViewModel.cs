@@ -411,37 +411,64 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             XDocument xDocJP = null;
             XDocument xDocCH_S = null;
             string message = "";
+            string message2 = "\n";
             if (ID != "" && ID != string.Empty && ID != null)
             {
-                if (Kor != string.Empty)
+                if (Kor != string.Empty && Kor !=null)
                 {
                     if (AddElementwithDefaultKey(Properties.Settings.Default.KorFileName, ID, Kor, ref xDocKR) == true) message += "한글, ";
                     else MessageBox.Show("같은 ID를 가진 리소스가 한글 파일에 존재합니다.");
                 }
-
-                if (Eng != string.Empty)
+                else
+                {
+                    Kor = "";
+                    AddElementwithDefaultKey(Properties.Settings.Default.KorFileName, ID, Kor, ref xDocKR);
+                    message2 += "한글, ";
+                }
+                if (Eng != string.Empty && Eng != null)
                 {
                     if (AddElementwithDefaultKey(Properties.Settings.Default.EngFileName, ID, Eng, ref xDocEN) == true) message += "영문, ";
                     else MessageBox.Show("같은 ID를 가진 리소스가 영문 파일에 존재합니다.");
                 }
-
-                if (Jpn != string.Empty)
+                else
+                {
+                    Eng = "";
+                    AddElementwithDefaultKey(Properties.Settings.Default.EngFileName, ID, Eng, ref xDocEN);
+                    message2 += "영문, ";
+                }
+                if (Jpn != string.Empty && Jpn != null)
                 {
                     if (AddElementwithDefaultKey(Properties.Settings.Default.JpnFileName, ID, Jpn, ref xDocJP) == true) message += "일문, ";
                     else MessageBox.Show("같은 ID를 가진 리소스가 일문 파일에 존재합니다.");
                 }
-
-                if (Chns != string.Empty)
+                else
+                {
+                    Jpn = "";
+                    AddElementwithDefaultKey(Properties.Settings.Default.JpnFileName, ID, Jpn, ref xDocJP);
+                    message2 += "일문, ";
+                }
+                if (Chns != string.Empty && Chns != null)
                 {
                     if (AddElementwithDefaultKey(Properties.Settings.Default.ChnsFileName, ID, Chns, ref xDocCH_S) == true) message += "중문, ";
                     else MessageBox.Show("같은 ID를 가진 리소스가 중문 파일에 존재합니다.");
                 }
-
+                else
+                {
+                    Chns = "";
+                    AddElementwithDefaultKey(Properties.Settings.Default.ChnsFileName, ID, Chns, ref xDocCH_S);
+                    message2 += "중문, ";
+                }
                 if (message.Length > 3)
                 {
+                    string finalmessage = message.Substring(0, message.Length - 2) + " 파일에 저장했습니다.";
+                    if (message2.Length > 3) finalmessage += "\n" + message2.Substring(0, message2.Length - 2) + "파일은 공백값으로 처리했습니다.";
                     SaveFiles(xDocKR, xDocEN, xDocJP, xDocCH_S);
-                    MessageBox.Show(message.Substring(0, message.Length - 2) + " 파일에 저장했습니다.");
+                    MessageBox.Show(finalmessage);
                     Initialize();
+                }
+                else
+                {
+                    MessageBox.Show("최소 하나의 언어에는 값을 입력해주시기 바랍니다.");
                 }
             }
             else
