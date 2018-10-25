@@ -1,0 +1,8 @@
+<Root xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+					xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:s="clr-namespace:System;assembly=mscorlib">
+  <s:String x:Key="keyA" xml:space="preserve">A</s:String>
+  <s:String x:Key="1" xml:space="preserve">1</s:String>
+  <s:String x:Key="2" xml:space="preserve">dsads&#xA;dasd&#xA;&#xA;da</s:String>
+  <s:String x:Key="keyLorem" xml:space="preserve">Curabitur id eros dui. Maecenas et ornare tellus. &#xA;Fusce lorem risus, ultricies vel tempus eu, pellentesque ut lorem. Etiam ipsum augue, sagittis non dignissim vel, ultrices vel arcu. Phasellus sit amet nisl vestibulum, varius ligula porttitor, placerat nisi. Cras ut urna pharetra, rutrum ante quis, tempus justo. Phasellus at mattis odio. Donec euismod tortor urna, laoreet ultrices mi convallis vel. Phasellus porta sapien in lacus lacinia, id dignissim nisi vestibulum. </s:String>
+</Root>
