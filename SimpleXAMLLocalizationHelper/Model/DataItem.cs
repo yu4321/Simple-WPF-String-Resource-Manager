@@ -9,7 +9,6 @@ namespace SimpleXAMLLocalizationHelper.Model
         private string _Eng;
         private string _Jpn;
         private string _Chns;
-        //private string _Chnt;
 
         public string ID
         {
@@ -31,7 +30,6 @@ namespace SimpleXAMLLocalizationHelper.Model
             }
             set
             {
-                //value=value.Replace("\r\n", "&#xA;");
                 Set(nameof(Kor), ref _Kor, value);
             }
         }
@@ -44,7 +42,6 @@ namespace SimpleXAMLLocalizationHelper.Model
             }
             set
             {
-                //value=value.Replace("\r\n", "&#xA;");
                 Set(nameof(Eng), ref _Eng, value);
             }
         }
@@ -57,7 +54,6 @@ namespace SimpleXAMLLocalizationHelper.Model
             }
             set
             {
-                //value=value.Replace("\r\n", "&#xA;");
                 Set(nameof(Jpn), ref _Jpn, value);
             }
         }
@@ -70,24 +66,8 @@ namespace SimpleXAMLLocalizationHelper.Model
             }
             set
             {
-                //value=value.Replace("\r\n", "&#xA;");
                 Set(nameof(Chns), ref _Chns, value);
             }
         }
-
-        /*
-        public string Chnt
-        {
-            get
-            {
-                return _Chnt;
-            }
-            set
-            {
-                value=value.Replace("\r\n", "&#xA;");
-                Set(nameof(Chnt), ref _Chnt, value);
-            }
-        }
-        */
     }
 }

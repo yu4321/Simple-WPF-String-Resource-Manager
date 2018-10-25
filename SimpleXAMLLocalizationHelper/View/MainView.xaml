@@ -9,7 +9,7 @@
              d:DesignHeight="450" d:DesignWidth="1000"
              Background="AntiqueWhite">
     <Grid>
-        <DataGrid x:Name="dataGrid1" HorizontalAlignment="Left" Margin="10,29,0,0" VerticalAlignment="Top" Height="399" Width="661" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" ColumnWidth="100" SelectedItem="{Binding nowindex}">
+        <DataGrid HorizontalAlignment="Left" Margin="10,29,0,0" VerticalAlignment="Top" Height="399" Width="661" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" ColumnWidth="100" SelectedItem="{Binding nowindex}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding ClickCommand}" />
@@ -27,7 +27,7 @@
         <Button Content="추가" HorizontalAlignment="Left" Margin="688,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding AddCommand}" />
         <Button Content="변경" HorizontalAlignment="Left" Margin="792,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding ModifyCommand}" />
         <Button Content="삭제" HorizontalAlignment="Left" Margin="897,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding DeleteCommand}" />
-        <Label Content="리소스이름" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="676,372,0,0" />
+        <Label Content="리소스 ID" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="676,372,0,0" />
         <TextBox HorizontalAlignment="Left" Height="23" Margin="750,374,0,0" TextWrapping="Wrap" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="159" />
         <Button Content="찾기" HorizontalAlignment="Left" Margin="919,376,0,0" VerticalAlignment="Top" Width="48" Command="{Binding SearchCommand}" />
         <Button Content="행 가져오기" HorizontalAlignment="Left" Margin="676,408,0,0" VerticalAlignment="Top" Width="84" Command="{Binding ClickCommand}" Visibility="Collapsed" />

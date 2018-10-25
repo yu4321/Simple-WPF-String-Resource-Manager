@@ -28,9 +28,9 @@ namespace SimpleXAMLLocalizationHelper.Functions
                     if (langcase == 2) dt.Jpn = query.Single<XElement>().Value;
                     if (langcase == 3) dt.Chns = query.Single<XElement>().Value;
                 }
-                catch
+                catch (Exception e)
                 {
-                    Console.WriteLine("중복 발생");
+                    Console.WriteLine(e.Message);
                 }
             }
         }
@@ -80,7 +80,6 @@ namespace SimpleXAMLLocalizationHelper.Functions
                     addplace = (XElement)xd.FirstNode;
                 }
 
-                System.Console.WriteLine("count " + find.Count<XElement>());
                 var findsame = from x in find
                                where x.Attribute(xmn + "Key").Value == newID
                                select x;
@@ -94,7 +93,6 @@ namespace SimpleXAMLLocalizationHelper.Functions
                     XElement xle = new XElement(smn + "String", newvalue.Replace("\r\n", "&#xA;").Replace("&amp;#xA;", "&#xA;"));
                     xle.Add(new XAttribute(xmn + "Key", newID));
                     xle.Add(new XAttribute(XNamespace.Xml + "space", "preserve"));
-                    System.Console.WriteLine(xle.ToString());
                     if (addplace == (XElement)xd.FirstNode) addplace.Add(xle);
                     else addplace.AddAfterSelf(xle);
                     result = true;
@@ -112,7 +110,6 @@ namespace SimpleXAMLLocalizationHelper.Functions
                 var find = from w in xd.Descendants()
                            where w.Attribute(xmn + "Key") != null && w.Attribute(xmn + "Key").Value == selectedID
                            select w;
-                System.Console.WriteLine("count " + find.Count<XElement>());
                 foreach (var x in find)
                 {
                     x.Value = newvalue.Replace("\r\n", "&#xA;"); ;
@@ -133,7 +130,6 @@ namespace SimpleXAMLLocalizationHelper.Functions
                     var find = from w in xd.Descendants()
                                where w.Attribute(xmn + "Key") != null && w.HasElements != true && w.Attribute(xmn + "Key").Value == nowid
                                select w;
-                    System.Console.WriteLine("count " + find.Count<XElement>());
                     find.Single<XElement>().Remove();
                     result = true;
                 }
@@ -157,7 +153,6 @@ namespace SimpleXAMLLocalizationHelper.Functions
                     var find = from w in xd.Descendants()
                                where w.Attribute(xmn + "Key") != null && w.HasElements != true && w.Attribute(xmn + "Key").Value == nowid
                                select w;
-                    System.Console.WriteLine("count " + find.Count<XElement>());
                     result = find.Single<XElement>().Value;
                 }
             }

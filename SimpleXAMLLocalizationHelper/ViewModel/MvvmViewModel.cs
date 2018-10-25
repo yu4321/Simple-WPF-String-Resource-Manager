@@ -339,7 +339,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 }
                 catch
                 {
-                    MessageBox.Show("한글 저장 실패");
+                    MessageBox.Show("한글 파일의 저장에 실패하였습니다.");
                 }
                 try
                 {
@@ -351,7 +351,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 }
                 catch
                 {
-                    MessageBox.Show("영어 저장 실패");
+                    MessageBox.Show("영문 파일의 저장에 실패하였습니다.");
                 }
                 try
                 {
@@ -363,7 +363,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 }
                 catch
                 {
-                    MessageBox.Show("일어 저장 실패");
+                    MessageBox.Show("일문 파일의 저장에 실패하였습니다.");
                 }
                 try
                 {
@@ -375,7 +375,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 }
                 catch
                 {
-                    MessageBox.Show("간체 저장 실패");
+                    MessageBox.Show("중문 파일의 저장에 실패하였습니다.");
                 }
                 MessageBox.Show("성공적으로 저장했습니다.");
             }
@@ -416,39 +416,27 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 if (Kor != string.Empty)
                 {
                     if (AddElementwithDefaultKey(Properties.Settings.Default.KorFileName, ID, Kor, ref xDocKR) == true) message += "한글, ";
-                    else MessageBox.Show("이미 있는거한글");
+                    else MessageBox.Show("같은 ID를 가진 리소스가 한글 파일에 존재합니다.");
                 }
-                else
-                {
-                    System.Console.WriteLine("한글 공백");
-                }
+
                 if (Eng != string.Empty)
                 {
-                    if (AddElementwithDefaultKey(Properties.Settings.Default.EngFileName, ID, Eng, ref xDocEN) == true) message += "영어, ";
-                    else MessageBox.Show("이미 있는거영어");
+                    if (AddElementwithDefaultKey(Properties.Settings.Default.EngFileName, ID, Eng, ref xDocEN) == true) message += "영문, ";
+                    else MessageBox.Show("같은 ID를 가진 리소스가 영문 파일에 존재합니다.");
                 }
-                else
-                {
-                    System.Console.WriteLine("영문 공백");
-                }
+
                 if (Jpn != string.Empty)
                 {
-                    if (AddElementwithDefaultKey(Properties.Settings.Default.JpnFileName, ID, Jpn, ref xDocJP) == true) message += "일어, ";
-                    else MessageBox.Show("이미 있는거일어");
+                    if (AddElementwithDefaultKey(Properties.Settings.Default.JpnFileName, ID, Jpn, ref xDocJP) == true) message += "일문, ";
+                    else MessageBox.Show("같은 ID를 가진 리소스가 일문 파일에 존재합니다.");
                 }
-                else
-                {
-                    System.Console.WriteLine("일문 공백");
-                }
+
                 if (Chns != string.Empty)
                 {
-                    if (AddElementwithDefaultKey(Properties.Settings.Default.ChnsFileName, ID, Chns, ref xDocCH_S) == true) message += "간체, ";
-                    else MessageBox.Show("이미 있는거간체");
+                    if (AddElementwithDefaultKey(Properties.Settings.Default.ChnsFileName, ID, Chns, ref xDocCH_S) == true) message += "중문, ";
+                    else MessageBox.Show("같은 ID를 가진 리소스가 중문 파일에 존재합니다.");
                 }
-                else
-                {
-                    System.Console.WriteLine("중문 공백");
-                }
+
                 if (message.Length > 3)
                 {
                     SaveFiles(xDocKR, xDocEN, xDocJP, xDocCH_S);
