@@ -377,7 +377,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 {
                     MessageBox.Show("중문 파일의 저장에 실패하였습니다.");
                 }
-                MessageBox.Show("성공적으로 저장했습니다.");
             }
             catch
             {
@@ -491,6 +490,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 ModifyElementwithIDandValue(Properties.Settings.Default.JpnFileName, ID, Jpn, ref xDocJP);
                 ModifyElementwithIDandValue(Properties.Settings.Default.ChnsFileName, ID, Chns, ref xDocCH_S);
                 SaveFiles(xDocKR, xDocEN, xDocJP, xDocCH_S);
+                MessageBox.Show("성공적으로 요소들을 수정하였습니다.");
                 Initialize();
             }
             catch
@@ -505,21 +505,49 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             XDocument xDocEN = null;
             XDocument xDocJP = null;
             XDocument xDocCH_S = null;
-            string nowid = nowindex.ID;
+            int successes = 0;
+            string nowid = "";
 
+            if (nowindex != null)
+            {
+                nowid = nowindex.ID;
+            }
+            else if (ID != null && ID!=string.Empty && ID!="" && ID.Length!=0)
+            {
+                nowid = ID;
+            }
+            else
+            {
+                MessageBox.Show("삭제할 요소를 선택하거나 ID를 입력해주십시오.");
+                return;
+            }
             try
             {
                 if (DeleteElementbyID(Properties.Settings.Default.KorFileName, nowid, ref xDocKR) == false) MessageBox.Show("해당 ID는 한글 파일에는 없습니다.");
+                else successes++;
                 if (DeleteElementbyID(Properties.Settings.Default.EngFileName, nowid, ref xDocEN) == false) MessageBox.Show("해당 ID는 영문 파일에는 없습니다.");
+                else successes++;
                 if (DeleteElementbyID(Properties.Settings.Default.JpnFileName, nowid, ref xDocJP) == false) MessageBox.Show("해당 ID는 일문 파일에는 없습니다.");
+                else successes++;
                 if (DeleteElementbyID(Properties.Settings.Default.ChnsFileName, nowid, ref xDocCH_S) == false) MessageBox.Show("해당 ID는 중문 파일에는 없습니다.");
-                SaveFiles(xDocKR, xDocEN, xDocJP, xDocCH_S);
-                Initialize();
+                else successes++;
+
+                if (successes > 1)
+                {
+                    SaveFiles(xDocKR, xDocEN, xDocJP, xDocCH_S);
+                    MessageBox.Show("해당 ID(" + nowid + ") 를 성공적으로 삭제하였습니다.");
+                    Initialize();
+                }
+                else
+                {
+                    return;
+                }
             }
             catch
             {
                 MessageBox.Show("ID 검색 과정에서 오류가 발생했습니다. xaml 파일들을 다시 한번 점검해주십시오.");
             }
+           
         }
 
         private void ExecuteClickCommand()
@@ -537,6 +565,14 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             Eng = GetValuefromID(Properties.Settings.Default.EngFileName, ID);
             Jpn = GetValuefromID(Properties.Settings.Default.JpnFileName, ID);
             Chns = GetValuefromID(Properties.Settings.Default.ChnsFileName, ID);
+            try
+            {
+                nowindex = (from w in Items where w.ID == ID select w).Single();
+            }
+            catch
+            {
+                nowindex = null;
+            }
         }
 
         #endregion command methods
