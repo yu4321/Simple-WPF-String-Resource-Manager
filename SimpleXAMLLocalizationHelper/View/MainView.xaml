@@ -9,30 +9,38 @@
              d:DesignHeight="450" d:DesignWidth="1000"
              Background="AntiqueWhite">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="320" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <DataGrid x:Name="DG" HorizontalAlignment="Left" Margin="10,29,0,10" VerticalAlignment="Top" MinHeight="399" MinWidth="661" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" MinColumnWidth="100" SelectedItem="{Binding nowindex}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseDoubleClick">
+                        <i:InvokeCommandAction Command="{Binding ClickCommand}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </DataGrid>
+            <Button Content="정렬 복구" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="75" Click="DataGridSortReset"/>
+        </Grid>
+        <Grid Grid.Column="1" VerticalAlignment="Bottom">
+            <Label Content="한국어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,30,0,0" FontSize="14" />
+            <TextBox HorizontalAlignment="Left" Height="46" Margin="85,36,0,0" TextWrapping="Wrap" Text="{Binding Kor, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
+            <Label Content="영어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,79,0,0" FontSize="14" />
+            <TextBox HorizontalAlignment="Left" Height="46" Margin="85,86,0,0" TextWrapping="Wrap" Text="{Binding Eng, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
+            <Label Content="일어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,134,0,0" FontSize="14" />
+            <TextBox HorizontalAlignment="Left" Height="46" Margin="85,137,0,0" TextWrapping="Wrap" Text="{Binding Jpn, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
+            <Label Content="간체" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,184,0,0" FontSize="14" />
+            <TextBox HorizontalAlignment="Left" Height="47" Margin="85,190,0,0" TextWrapping="Wrap" Text="{Binding Chns, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
+            <Button Content="추가" HorizontalAlignment="Left" Margin="8,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding AddCommand}" />
+            <Button Content="변경" HorizontalAlignment="Left" Margin="113,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding ModifyCommand}" />
+            <Button Content="삭제" HorizontalAlignment="Left" Margin="217,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding DeleteCommand}" />
+            <Label Content="리소스 ID" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,372,0,0" />
+            <TextBox HorizontalAlignment="Left" Height="23" Margin="91,374,0,0" TextWrapping="Wrap" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="159" />
+            <Button Content="찾기" HorizontalAlignment="Left" Margin="260,376,0,0" VerticalAlignment="Top" Width="48" Command="{Binding SearchCommand}" />
+            <Label Content="추가 리소스는 모두 s:String, xml:space=&quot;preserve&quot;으로 저장됩니다." HorizontalAlignment="Left" Margin="0,415,0,0" VerticalAlignment="Top" Height="25" Width="314" FontSize="10" IsEnabled="False" />
 
-        <DataGrid x:Name="DG" HorizontalAlignment="Left" Margin="10,29,0,0" VerticalAlignment="Top" Height="399" Width="661" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" ColumnWidth="100" SelectedItem="{Binding nowindex}">
-            <i:Interaction.Triggers>
-                <i:EventTrigger EventName="MouseDoubleClick">
-                    <i:InvokeCommandAction Command="{Binding ClickCommand}" />
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-        </DataGrid>
-        <Label Content="한국어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="708,30,0,0" FontSize="14" />
-        <TextBox HorizontalAlignment="Left" Height="46" Margin="765,36,0,0" TextWrapping="Wrap" Text="{Binding Kor, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
-        <Label Content="영어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="708,79,0,0" FontSize="14" />
-        <TextBox HorizontalAlignment="Left" Height="46" Margin="765,86,0,0" TextWrapping="Wrap" Text="{Binding Eng, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
-        <Label Content="일어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="708,134,0,0" FontSize="14" />
-        <TextBox HorizontalAlignment="Left" Height="46" Margin="765,137,0,0" TextWrapping="Wrap" Text="{Binding Jpn, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
-        <Label Content="간체" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="708,184,0,0" FontSize="14" />
-        <TextBox HorizontalAlignment="Left" Height="47" Margin="765,190,0,0" TextWrapping="Wrap" Text="{Binding Chns, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
-        <Button Content="추가" HorizontalAlignment="Left" Margin="688,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding AddCommand}" />
-        <Button Content="변경" HorizontalAlignment="Left" Margin="792,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding ModifyCommand}" />
-        <Button Content="삭제" HorizontalAlignment="Left" Margin="897,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding DeleteCommand}" />
-        <Label Content="리소스 ID" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="676,372,0,0" />
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="750,374,0,0" TextWrapping="Wrap" Text="{Binding ID, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="159" />
-        <Button Content="찾기" HorizontalAlignment="Left" Margin="919,376,0,0" VerticalAlignment="Top" Width="48" Command="{Binding SearchCommand}" />
-        <Button Content="행 가져오기" HorizontalAlignment="Left" Margin="676,408,0,0" VerticalAlignment="Top" Width="84" Command="{Binding ClickCommand}" Visibility="Collapsed" />
-        <Label Content="추가 리소스는 모두 s:String, xml:space=&quot;preserve&quot;으로 저장됩니다." HorizontalAlignment="Left" Margin="676,415,0,0" VerticalAlignment="Top" Height="25" Width="314" FontSize="10" IsEnabled="False" />
-        <Button Content="정렬 복구" HorizontalAlignment="Left" Margin="10,4,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        </Grid>
+        
     </Grid>
 </UserControl>

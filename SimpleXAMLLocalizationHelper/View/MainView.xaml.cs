@@ -14,7 +14,7 @@ namespace SimpleXAMLLocalizationHelper.View
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        private void DataGridSortReset(object sender, System.Windows.RoutedEventArgs e)
         {
             ICollectionView view = CollectionViewSource.GetDefaultView(DG.ItemsSource);
             if (view != null)
