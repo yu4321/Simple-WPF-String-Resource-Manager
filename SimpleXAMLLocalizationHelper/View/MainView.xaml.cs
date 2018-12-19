@@ -1,4 +1,6 @@
-﻿using System.Windows.Controls;
+﻿using System.ComponentModel;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace SimpleXAMLLocalizationHelper.View
 {
@@ -10,6 +12,19 @@ namespace SimpleXAMLLocalizationHelper.View
         public MainView()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            ICollectionView view = CollectionViewSource.GetDefaultView(DG.ItemsSource);
+            if (view != null)
+            {
+                view.SortDescriptions.Clear();
+                foreach (DataGridColumn column in DG.Columns)
+                {
+                    column.SortDirection = null;
+                }
+            }
         }
     }
 }

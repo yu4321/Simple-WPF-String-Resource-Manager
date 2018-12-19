@@ -9,7 +9,8 @@
              d:DesignHeight="450" d:DesignWidth="1000"
              Background="AntiqueWhite">
     <Grid>
-        <DataGrid HorizontalAlignment="Left" Margin="10,29,0,0" VerticalAlignment="Top" Height="399" Width="661" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" ColumnWidth="100" SelectedItem="{Binding nowindex}">
+
+        <DataGrid x:Name="DG" HorizontalAlignment="Left" Margin="10,29,0,0" VerticalAlignment="Top" Height="399" Width="661" ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" ColumnWidth="100" SelectedItem="{Binding nowindex}">
             <i:Interaction.Triggers>
                 <i:EventTrigger EventName="MouseDoubleClick">
                     <i:InvokeCommandAction Command="{Binding ClickCommand}" />
@@ -32,5 +33,6 @@
         <Button Content="찾기" HorizontalAlignment="Left" Margin="919,376,0,0" VerticalAlignment="Top" Width="48" Command="{Binding SearchCommand}" />
         <Button Content="행 가져오기" HorizontalAlignment="Left" Margin="676,408,0,0" VerticalAlignment="Top" Width="84" Command="{Binding ClickCommand}" Visibility="Collapsed" />
         <Label Content="추가 리소스는 모두 s:String, xml:space=&quot;preserve&quot;으로 저장됩니다." HorizontalAlignment="Left" Margin="676,415,0,0" VerticalAlignment="Top" Height="25" Width="314" FontSize="10" IsEnabled="False" />
+        <Button Content="정렬 복구" HorizontalAlignment="Left" Margin="10,4,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
     </Grid>
 </UserControl>

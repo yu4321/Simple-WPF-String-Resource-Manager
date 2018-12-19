@@ -16,5 +16,10 @@ namespace SimpleXAMLLocalizationHelper
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
         }
+
+        public void ActivateWindow()
+        {
+            this.Activate();
+        }
     }
 }

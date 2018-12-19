@@ -11,7 +11,7 @@ namespace SimpleXAMLLocalizationHelper.Functions
     {
         public static readonly XNamespace xmn = XNamespace.Get("http://schemas.microsoft.com/winfx/2006/xaml");
         public static readonly XNamespace smn = XNamespace.Get("clr-namespace:System;assembly=mscorlib");
-        public static readonly string ResourcePath = @"C:\Languages\";
+        public static string ResourcePath = @"C:\Languages\";
 
         #region methods
 
