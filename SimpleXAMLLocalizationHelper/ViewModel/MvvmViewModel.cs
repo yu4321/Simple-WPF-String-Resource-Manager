@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using static SimpleXAMLLocalizationHelper.Functions.Utils;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
 {
@@ -159,16 +160,25 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             SearchCommand = new RelayCommand(() => ExecuteSearchCommand());
             ClickCommand = new RelayCommand(() => ExecuteClickCommand());
             DeleteCommand = new RelayCommand(() => ExecuteDeleteCommand());
-            Initialize();
+            if (!IsInDesignMode)
+                Initialize();
         }
 
         private string GetFolderPath()
         {
             string sresult;
-            using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+            using (var dialog = new CommonOpenFileDialog())
             {
-                System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-                sresult = dialog.SelectedPath;
+                dialog.IsFolderPicker = true;
+                CommonFileDialogResult result = dialog.ShowDialog();
+                try
+                {
+                    sresult = dialog.FileName;
+                }
+                catch
+                {
+                    sresult = "";
+                }
             }
             sresult+="\\";
             return sresult;
@@ -235,7 +245,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
             catch
             {
-                MessageBox.Show("파일을 올바른 위치에 넣어주세요!\n 폴더 안에 들어가는 파일 명은: \nKorean.xaml\nEnglish.xaml\nJapanese.xaml\nChinese.xaml\n이어야 합니다. 또한 각 요소는 모두 어트리뷰트 \"x:Key\"를 고유한 값으로 지니고 있어야 합니다.\n 네 파일 모두 반드시 필요하오니, 4가지 언어가 모두 필요없다 해도 이름이 같은 더미파일이라도 넣어주시기 바랍니다.");
+                MessageBox.Show(Application.Current.MainWindow, "파일을 올바른 위치에 넣어주세요!\n 폴더 안에 들어가는 파일 명은: \nKorean.xaml\nEnglish.xaml\nJapanese.xaml\nChinese.xaml\n이어야 합니다. 또한 각 요소는 모두 어트리뷰트 \"x:Key\"를 고유한 값으로 지니고 있어야 합니다.\n 네 파일 모두 반드시 필요하오니, 4가지 언어가 모두 필요없다 해도 이름이 같은 더미파일이라도 넣어주시기 바랍니다.");
                 Application.Current.Shutdown();
                 return;
             }
@@ -335,6 +345,8 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 if (item.Jpn == null) item.Jpn = "null";
                 if (item.Chns == null) item.Chns = "null";
             }
+            Application.Current.MainWindow.Topmost = true;
+            Application.Current.MainWindow.Topmost = false;
             Application.Current.MainWindow.Activate();
             //MainWindow.
         }
