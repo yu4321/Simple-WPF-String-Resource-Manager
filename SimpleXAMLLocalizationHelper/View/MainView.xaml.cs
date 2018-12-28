@@ -9,9 +9,30 @@ namespace SimpleXAMLLocalizationHelper.View
     /// </summary>
     public partial class MainView : UserControl
     {
+        bool isopened = false;
         public MainView()
         {
             InitializeComponent();
+            mainGrid.ColumnDefinitions[2].Width = new System.Windows.GridLength(0);
+            btn_addattr.Content = ">>>>";
+            isopened = false;
+            //CloseAttrPanel();
+        }
+
+        private void CloseAttrPanel()
+        {
+            App.Current.MainWindow.Width -= 320;
+            mainGrid.ColumnDefinitions[2].Width = new System.Windows.GridLength(0);
+            btn_addattr.Content = ">>>>";
+            isopened = false;
+        }
+
+        private void OpenAttrPanel()
+        {
+            App.Current.MainWindow.Width += 320;
+            mainGrid.ColumnDefinitions[2].Width = new System.Windows.GridLength(320);
+            btn_addattr.Content = "<<<<";
+            isopened = true;
         }
 
         private void DataGridSortReset(object sender, System.Windows.RoutedEventArgs e)
@@ -26,5 +47,22 @@ namespace SimpleXAMLLocalizationHelper.View
                 }
             }
         }
+
+        private void OpenandCloseAttributePage(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (isopened) CloseAttrPanel();
+            else OpenAttrPanel();
+        }
+
+        private void checkBox_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+            if (checkBox.IsChecked == false && isopened) CloseAttrPanel();
+        }
+
+        protected void Datagrid_LostFocus(object sender, System.Windows.RoutedEventArgs e)
+        {
+            e.Handled = true;
+        }
+      
     }
 }

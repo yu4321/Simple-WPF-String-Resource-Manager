@@ -7,7 +7,7 @@
         mc:Ignorable="d ignore"
         Height="480"
         Width="1015.142"
-        Title="MVVM Light Application"
+        Title="Simple XAML Locale Resource Manager"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
 
     <Grid>

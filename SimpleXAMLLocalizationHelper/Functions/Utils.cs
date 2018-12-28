@@ -1,6 +1,7 @@
 ﻿using SimpleXAMLLocalizationHelper.Model;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -101,6 +102,50 @@ namespace SimpleXAMLLocalizationHelper.Functions
             return result;
         }
 
+        public static bool AddElementwithDefaultKey(string location, string newID, string newvalue, ref XDocument xd, List<XAttribute> attributes=null)
+        {
+            bool result = false;
+            XElement addplace;
+            using (var sr = new StreamReader(ResourcePath + location + ".xaml"))
+            {
+                xd = XDocument.Load(sr);
+                var find = from w in xd.Descendants()
+                           where w.Attribute(xmn + "Key") != null && w.HasElements != true
+                           select w;
+                try
+                {
+                    addplace = find.Last<XElement>();
+                }
+                catch
+                {
+                    addplace = (XElement)xd.FirstNode;
+                }
+
+                var findsame = from x in find
+                               where x.Attribute(xmn + "Key").Value == newID
+                               select x;
+
+                if (findsame.Count<XElement>() > 0)
+                {
+                    result = false;
+                }
+                else
+                {
+                    XElement xle = new XElement(smn + "String", newvalue.Replace("\r\n", "&#xA;").Replace("&amp;#xA;", "&#xA;"));
+                    xle.Add(new XAttribute(xmn + "Key", newID));
+                    if (attributes != null)
+                    {
+                        foreach (XAttribute attr in attributes) xle.Add(attr);
+                    }
+                    //xle.Add(new XAttribute(XNamespace.Xml + "space", "preserve"));
+                    if (addplace == (XElement)xd.FirstNode) addplace.Add(xle);
+                    else addplace.AddAfterSelf(xle);
+                    result = true;
+                }
+            }
+            return result;
+        }
+
         public static bool ModifyElementwithIDandValue(string location, string selectedID, string newvalue, ref XDocument xd)
         {
             bool result = false;
@@ -137,6 +182,65 @@ namespace SimpleXAMLLocalizationHelper.Functions
                 {
                     result = false;
                 }
+            }
+            return result;
+        }
+
+        public static List<XAttribute> GetElementAttributesbyID(string location, string nowid)
+        {
+            XDocument xd;
+            List<XAttribute> result = null;
+            using (var sr = new StreamReader(ResourcePath + location + ".xaml"))
+            {
+                xd = XDocument.Load(sr);
+                try
+                {
+                    var find = from w in xd.Descendants()
+                               where w.Attribute(xmn + "Key") != null && w.HasElements != true && w.Attribute(xmn + "Key").Value == nowid
+                               select w;
+                    result = find.Single<XElement>().Attributes().ToList();
+                }
+                catch
+                {
+                    result = null;
+                }
+            }
+            return result;
+        }
+
+        public static bool DeleteAttributefromElementbyID(string location, string selectedID, XAttribute newAttribute, ref XDocument xd)
+        {
+            bool result = false;
+            using (var sr = new StreamReader(ResourcePath + location + ".xaml"))
+            {
+                xd = XDocument.Load(sr);
+                var find = from w in xd.Descendants()
+                           where w.Attribute(xmn + "Key") != null && w.Attribute(xmn + "Key").Value == selectedID
+                           select w;
+                foreach (var x in find)
+                {
+                    var attr = from w in x.Attributes(newAttribute.Name) where w.Value == newAttribute.Value select w;
+                    attr.Remove();
+                }
+                result = true;
+            }
+            return result;
+        }
+
+        public static bool AddAttributefromElementbyID(string location, string selectedID, XAttribute newAttribute, ref XDocument xd)
+        {
+            bool result = false;
+            using (var sr = new StreamReader(ResourcePath + location + ".xaml"))
+            {
+                xd = XDocument.Load(sr);
+                var find = from w in xd.Descendants()
+                           where w.Attribute(xmn + "Key") != null && w.Attribute(xmn + "Key").Value == selectedID
+                           select w;
+                foreach (var x in find)
+                {
+                    x.SetAttributeValue(newAttribute.Name, newAttribute.Value);
+                }
+                result = true;
             }
             return result;
         }

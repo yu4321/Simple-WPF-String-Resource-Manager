@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Xml.Linq;
 using static SimpleXAMLLocalizationHelper.Functions.Utils;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Collections.Generic;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
 {
@@ -126,6 +127,34 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
+        private AttributeItem _nowindex_a1;
+
+        public AttributeItem nowindex_a1
+        {
+            get
+            {
+                return _nowindex_a1;
+            }
+            set
+            {
+                Set(nameof(nowindex_a1), ref _nowindex_a1, value);
+            }
+        }
+
+        private AttributeItem _nowindex_a2;
+
+        public AttributeItem nowindex_a2
+        {
+            get
+            {
+                return _nowindex_a2;
+            }
+            set
+            {
+                Set(nameof(nowindex_a2), ref _nowindex_a2, value);
+            }
+        }
+
         private ObservableCollection<DataItem> _Items;
 
         public ObservableCollection<DataItem> Items
@@ -142,11 +171,66 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
+        private ObservableCollection<AttributeItem> _ItemsA1;
+
+        public ObservableCollection<AttributeItem> ItemsA1
+
+        {
+            get
+            {
+                return _ItemsA1;
+            }
+
+            set
+            {
+                Set(nameof(ItemsA1), ref _ItemsA1, value);
+            }
+        }
+
+        private ObservableCollection<AttributeItem> _ItemsA2;
+
+        public ObservableCollection<AttributeItem> ItemsA2
+
+        {
+            get
+            {
+                return _ItemsA2;
+            }
+
+            set
+            {
+                Set(nameof(ItemsA2), ref _ItemsA2, value);
+            }
+        }
+
+        private bool _isAttrsUsing;
+
+        public bool IsAttrsUsing
+        {
+            get
+            {
+                return _isAttrsUsing;
+            }
+
+            set
+            {
+                Set(nameof(IsAttrsUsing), ref _isAttrsUsing, value);
+            }
+        }
+
         public ICommand AddCommand { get; set; }
         public ICommand ModifyCommand { get; set; }
         public ICommand SearchCommand { get; set; }
         public ICommand ClickCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
+
+        public ICommand AddCommandA1 { get; set; }
+        public ICommand ModifyCommandA1 { get; set; }
+        public ICommand DeleteCommandA1 { get; set; }
+
+        public ICommand AddCommandA2 { get; set; }
+        public ICommand ModifyCommandA2 { get; set; }
+        public ICommand DeleteCommandA2 { get; set; }
 
         #endregion properties and variables
 
@@ -155,13 +239,30 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         public MvvmViewModel()
         {
             Items = new ObservableCollection<DataItem>();
+            ItemsA1 = new ObservableCollection<AttributeItem>();
+            ItemsA2 = new ObservableCollection<AttributeItem>();
+            ItemsA2.Add(new AttributeItem()
+            {
+                Content = new XAttribute(XNamespace.Xml + "space", "preserve")
+            });
+            ItemsA2.Add(new AttributeItem()
+            {
+                Content = new XAttribute(XNamespace.Xml + "space", "default")
+            });
             AddCommand = new RelayCommand(() => ExecuteAddCommand());
             ModifyCommand = new RelayCommand(() => ExecuteModifyCommand());
             SearchCommand = new RelayCommand(() => ExecuteSearchCommand());
             ClickCommand = new RelayCommand(() => ExecuteClickCommand());
             DeleteCommand = new RelayCommand(() => ExecuteDeleteCommand());
+            AddCommandA1 = new RelayCommand(() => ExecuteAddCommandA1());
+            DeleteCommandA1 = new RelayCommand(() => ExecuteDeleteCommandA1());
+            AddCommandA2 = new RelayCommand(() => ExecuteAddCommandA2());
+            DeleteCommandA2 = new RelayCommand(() => ExecuteDeleteCommandA2());
             if (!IsInDesignMode)
+            {
+                SetFolderPath();
                 Initialize();
+            }
         }
 
         private string GetFolderPath()
@@ -185,6 +286,12 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             return sresult;
         }
 
+        private void SetFolderPath()
+        {
+            if (!IsInDesignMode)
+                ResourcePath = GetFolderPath();
+        }
+
         private void Initialize()
         {
             XDocument xDocKR;
@@ -201,9 +308,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             ArrayList nameCH_S = new ArrayList();
 
             Items.Clear();
-
-            if (!IsInDesignMode)
-                ResourcePath = GetFolderPath();
 
             try
             {
@@ -429,6 +533,31 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
             SaveFiles(kr.ToString(), en.ToString(), jp.ToString(), ch.ToString());
         }
+
+        private void GetAttributesFromID(string ID)
+        {
+            ItemsA1.Clear();
+            nowindex_a1 = null;
+            nowindex_a2 = null;
+            try
+            {
+                //List<XAttribute> attributesKR = GetElementAttributesbyID(Properties.Settings.Default.KorFileName, ID);
+                //List<XAttribute> attributesEN = GetElementAttributesbyID(Properties.Settings.Default.EngFileName, ID);
+                //List<XAttribute> attributesJP = GetElementAttributesbyID(Properties.Settings.Default.JpnFileName, ID);
+                //List<XAttribute> attributesCH = GetElementAttributesbyID(Properties.Settings.Default.ChnsFileName, ID);
+                List<XAttribute> allattributes = GetElementAttributesbyID(Properties.Settings.Default.KorFileName, ID);//GetElementAttributesbyID(Properties.Settings.Default.ChnsFileName, ID).Union(GetElementAttributesbyID(Properties.Settings.Default.JpnFileName, ID).Union(GetElementAttributesbyID(Properties.Settings.Default.EngFileName, ID).Union(GetElementAttributesbyID(Properties.Settings.Default.KorFileName, ID)))).ToList();
+                foreach (var x in allattributes)
+                {
+                    ItemsA1.Add(new AttributeItem() {
+                        Content = x
+                    });
+                }
+            }
+            catch
+            {
+
+            }
+        }
         #endregion
 
         #region command methods
@@ -587,6 +716,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             Eng = nowindex.Eng;
             Jpn = nowindex.Jpn;
             Chns = nowindex.Chns;
+            if (IsAttrsUsing) GetAttributesFromID(nowindex.ID);
         }
 
         private void ExecuteSearchCommand()
@@ -603,6 +733,89 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             {
                 nowindex = null;
             }
+        }
+
+        private void ExecuteAddCommandA1()
+        {
+            if (nowindex_a2 == null)
+            {
+                MessageBox.Show("삽입할 어트리뷰트를 선택해주세요!");
+                return;
+            }
+
+            if ((from w in ItemsA1 where w.Content.Name==nowindex_a2.Content.Name select w).Count()>0)
+            {
+                MessageBox.Show("동일한 어트리뷰트의 중복 삽입은 불가능합니다!");
+                return;
+            }
+
+            XDocument xDocKR = null;
+            XDocument xDocEN = null;
+            XDocument xDocJP = null;
+            XDocument xDocCH_S = null;
+            XAttribute target = nowindex_a2.Content;
+            try
+            {
+                AddAttributefromElementbyID(Properties.Settings.Default.KorFileName, ID, target, ref xDocKR);
+                AddAttributefromElementbyID(Properties.Settings.Default.EngFileName, ID, target, ref xDocEN);
+                AddAttributefromElementbyID(Properties.Settings.Default.JpnFileName, ID, target, ref xDocJP);
+                AddAttributefromElementbyID(Properties.Settings.Default.ChnsFileName, ID, target, ref xDocCH_S);
+                SaveFiles(xDocKR, xDocEN, xDocJP, xDocCH_S);
+                MessageBox.Show("성공적으로 요소들을 수정하였습니다.");
+                Initialize();
+                GetAttributesFromID(ID);
+            }
+            catch
+            {
+                MessageBox.Show("ID 검색 과정에서 오류가 발생했습니다. xaml 파일들을 다시 한번 점검해주십시오.");
+            }
+        }
+
+        private void ExecuteDeleteCommandA1()
+        {
+            if (nowindex_a1 == null)
+            {
+                MessageBox.Show("삭제할 어트리뷰트를 선택해주세요!");
+                return;
+            }
+
+            if (nowindex_a1.Content.Name.LocalName.Contains("Key"))
+            {
+                MessageBox.Show("키 값의 삭제는 불가능합니다!");
+                return;
+            }
+            
+            XDocument xDocKR = null;
+            XDocument xDocEN = null;
+            XDocument xDocJP = null;
+            XDocument xDocCH_S = null;
+            XAttribute target = nowindex_a1.Content;
+            try
+            {
+                DeleteAttributefromElementbyID(Properties.Settings.Default.KorFileName, ID, target, ref xDocKR);
+                DeleteAttributefromElementbyID(Properties.Settings.Default.EngFileName, ID, target, ref xDocEN);
+                DeleteAttributefromElementbyID(Properties.Settings.Default.JpnFileName, ID, target, ref xDocJP);
+                DeleteAttributefromElementbyID(Properties.Settings.Default.ChnsFileName, ID, target, ref xDocCH_S);
+                SaveFiles(xDocKR, xDocEN, xDocJP, xDocCH_S);
+                MessageBox.Show("성공적으로 요소들을 수정하였습니다.");
+                Initialize();
+                GetAttributesFromID(ID);
+            }
+            catch
+            {
+                MessageBox.Show("ID 검색 과정에서 오류가 발생했습니다. xaml 파일들을 다시 한번 점검해주십시오.");
+            }
+            
+        }
+
+        private void ExecuteAddCommandA2()
+        {
+
+        }
+
+        private void ExecuteDeleteCommandA2()
+        {
+
         }
 
         #endregion command methods
