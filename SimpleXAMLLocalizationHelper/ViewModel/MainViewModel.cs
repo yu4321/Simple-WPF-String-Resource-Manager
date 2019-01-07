@@ -1,5 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
+using SimpleXAMLLocalizationHelper.Messages;
+using System.Diagnostics;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
 {
@@ -30,7 +33,32 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         /// </summary>
         public MainViewModel()
         {
-            CurrentViewModel = ServiceLocator.Current.GetInstance<MvvmViewModel>();
+            CurrentViewModel = new StartViewModel();
+            Messenger.Default.Register<GotoPageMessage>(this,(x)=>ReceivePageChangeMessage(x));
+        }
+
+        private void ReceivePageChangeMessage(GotoPageMessage action)
+        {
+            switch (action.NextPage)
+            {
+                case PageName.Start:
+                    CurrentViewModel = new StartViewModel();
+                    break;
+                case PageName.Core:
+                    var temp = new CoreViewModel();
+                    if (temp.DataItems.Columns.Count > 0)
+                    {
+                        CurrentViewModel = temp;
+                    }
+                    break;
+                case PageName.History:
+                    Process.Start("notepad.exe", "logs/" + System.Reflection.Assembly.GetEntryAssembly().GetName().Name + ".log");
+                    break;
+                case PageName.Setting:
+                    Process.Start("notepad.exe", "Setting.json");
+                    break;
+            }
+            System.GC.Collect();
         }
 
         ////public override void Cleanup()

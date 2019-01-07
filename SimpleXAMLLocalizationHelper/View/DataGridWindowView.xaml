@@ -1,0 +1,16 @@
+﻿<Window x:Class="SimpleXAMLLocalizationHelper.View.DataGridWindowView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:local="clr-namespace:SimpleXAMLLocalizationHelper.View"
+        mc:Ignorable="d"
+        Title="DataGridWindowView" 
+        ResizeMode="NoResize"
+        Height="460" Width="700"
+        >
+    <Grid>
+        <DataGrid x:Name="DG" Height="399" Width="661" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" MaxHeight="399" MaxWidth="661" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" MinColumnWidth="100" />
+    </Grid>
+</Window>

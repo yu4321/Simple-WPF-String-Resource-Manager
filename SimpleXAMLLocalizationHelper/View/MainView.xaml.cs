@@ -16,7 +16,6 @@ namespace SimpleXAMLLocalizationHelper.View
             mainGrid.ColumnDefinitions[2].Width = new System.Windows.GridLength(0);
             btn_addattr.Content = ">>>>";
             isopened = false;
-            //CloseAttrPanel();
         }
 
         private void CloseAttrPanel()

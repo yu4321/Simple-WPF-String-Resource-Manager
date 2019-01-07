@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace SimpleXAMLLocalizationHelper.Functions
+namespace SimpleXAMLLocalizationHelper.Utils
 {
-    public static class Utils
+    public static class Common
     {
         public static readonly XNamespace xmn = XNamespace.Get("http://schemas.microsoft.com/winfx/2006/xaml");
         public static readonly XNamespace smn = XNamespace.Get("clr-namespace:System;assembly=mscorlib");
@@ -31,7 +31,7 @@ namespace SimpleXAMLLocalizationHelper.Functions
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    App.LoggerEx.Warn(e.Message);
                 }
             }
         }
@@ -56,10 +56,40 @@ namespace SimpleXAMLLocalizationHelper.Functions
             }
         }
 
+        public static XDocument ReplaceCarriageReturns_XDoc(XDocument xd)
+        {
+            try
+            {
+                if (xd.DescendantNodes() != null)
+                {
+                    foreach (var v in xd.DescendantNodes())
+                    {
+                        XElement x = null;
+                        if (v is XElement) x = (XElement)v;
+                        else continue;
+                        if (x.HasElements) continue;
+                        x.Value = x.Value.Replace("\n", "&#xA;");
+                    }
+                }
+                return xd;
+            }
+            catch
+            {
+                throw new Exception();
+            }
+        }
+
         public static void ReplaceCarriageReturns_String(ref string s)
         {
             s = s.Replace("&amp;#xA;", "&#xA;");
             s = s.Replace("\" xmlns", "\"\r\n\t\t\t\t\txmlns");
+        }
+
+        public static string ReplaceCarriageReturns_String(string s)
+        {
+            s = s.Replace("&amp;#xA;", "&#xA;");
+            s = s.Replace("\" xmlns", "\"\r\n\t\t\t\t\txmlns");
+            return s;
         }
 
         public static bool AddElementwithDefaultKey(string location, string newID, string newvalue, ref XDocument xd)

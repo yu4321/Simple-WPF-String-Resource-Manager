@@ -7,14 +7,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:ignore="http://www.galasoft.ch/ignore"
              StartupUri="MainWindow.xaml"
+             ShutdownMode="OnLastWindowClose"
              mc:Ignorable="d ignore">
 
     <Application.Resources>
         <!--Global View Model Locator-->
         <vm:ViewModelLocator x:Key="Locator"
                              d:IsDataSource="True" />
-        <DataTemplate DataType="{x:Type vm:MvvmViewModel}">
+        <DataTemplate DataType="{x:Type vm:StartViewModel}">
+            <view:StartView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:CoreViewModel}">
             <view:MainView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AutoEditExecuteViewModel}">
+            <view:AutoEditExecuteView />
         </DataTemplate>
     </Application.Resources>
 </Application>

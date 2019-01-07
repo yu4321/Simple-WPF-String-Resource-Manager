@@ -28,7 +28,8 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             SimpleIoc.Default.Register<MainViewModel>();
-            SimpleIoc.Default.Register<MvvmViewModel>();
+            SimpleIoc.Default.Register<CoreViewModel>();
+            SimpleIoc.Default.Register<StartViewModel>();
         }
 
         /// <summary>
@@ -42,6 +43,23 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             get
             {
                 return ServiceLocator.Current.GetInstance<MainViewModel>();
+            }
+        }
+
+        public CoreViewModel Core
+        {
+            get
+            {
+                if (ServiceLocator.Current.GetInstance<MainViewModel>().CurrentViewModel is CoreViewModel) return ServiceLocator.Current.GetInstance<MainViewModel>().CurrentViewModel as CoreViewModel;
+                else return ServiceLocator.Current.GetInstance<CoreViewModel>();
+            }
+        }
+
+        public StartViewModel Start
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<StartViewModel>();
             }
         }
 
