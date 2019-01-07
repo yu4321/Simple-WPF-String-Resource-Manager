@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Practices.ServiceLocation;
 using SimpleXAMLLocalizationHelper.Messages;
+using System;
 using System.Diagnostics;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
@@ -34,6 +35,9 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         public MainViewModel()
         {
             CurrentViewModel = new StartViewModel();
+            App.Logger.Info("\n*******************************************************************");
+            App.Logger.Info("실행 - " + DateTime.Now.ToString());
+            App.Logger.Info("*******************************************************************\n");
             Messenger.Default.Register<GotoPageMessage>(this,(x)=>ReceivePageChangeMessage(x));
         }
 

@@ -48,13 +48,13 @@ namespace SimpleXAMLLocalizationHelper.Model
                         for(int j = 1; j < originalTable.Columns.Count; j++)
                         {
                             result += curorgitem[j];
-                            if (j < originalTable.Columns.Count-1) result += ", ";
+                            if (j < originalTable.Columns.Count-1) result += " , ";
                         }
                         result += string.Format(") to [{0}](", currepitem[0]);
                         for (int j = 1; j < replaceTable.Columns.Count; j++)
                         {
                             result += currepitem[j];
-                            if (j < replaceTable.Columns.Count-1) result += ", ";
+                            if (j < replaceTable.Columns.Count-1) result += " , ";
                         }
                         result += ")\n\n";
                     }
@@ -74,7 +74,7 @@ namespace SimpleXAMLLocalizationHelper.Model
                             for(int j = 1; j < originalTable.Columns.Count; j++)
                             {
                                 result += curorgitem[j];
-                                if (j < originalTable.Columns.Count-1) result += ", ";
+                                if (j < originalTable.Columns.Count-1) result += " , ";
                             }
                             result += string.Format("), Change {0} to {1}\n\n", orgrep, reprep);
                         }

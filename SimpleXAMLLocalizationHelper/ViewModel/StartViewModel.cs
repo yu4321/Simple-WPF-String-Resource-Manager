@@ -64,7 +64,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             try
             {
                 LoadSettings();
-                WriteTimeStamptoSetting();
             }
             catch
             {
@@ -77,7 +76,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             try
             {
                 LoadSettings();
-                WriteTimeStamptoSetting();
                 Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Core));
             }
             catch
@@ -89,7 +87,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         private void ExecuteOpenSettingCommand()
         {
             LoadSettings();
-            WriteTimeStamptoSetting();
             Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Setting));
         }
 
@@ -128,6 +125,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                     throw;
                 }
             }
+            WriteTimeStamptoSetting();
         }
         
         private void WriteTimeStamptoSetting()

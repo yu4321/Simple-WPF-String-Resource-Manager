@@ -317,7 +317,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                                     isoktoadd = false;
                                     foreach (var lang in LangList)
                                     {
-                                        if((string)next[LangMode] != (string)i[LangMode])
+                                        if((string)next[lang] != (string)i[lang])
                                         {
                                             isoktoadd = true;
                                         }
