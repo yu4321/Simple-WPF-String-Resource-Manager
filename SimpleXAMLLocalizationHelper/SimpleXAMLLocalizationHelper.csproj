@@ -108,6 +108,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CustomDialogs\AddFavoriteDialog.xaml.cs">
+      <DependentUpon>AddFavoriteDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CustomDialogs\MyFolderSelectDialog.xaml.cs">
+      <DependentUpon>MyFolderSelectDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Messages\ChangeWindowStateMessage.cs" />
     <Compile Include="Model\LanguageBoxItem.cs" />
     <Compile Include="Model\SettingModel.cs" />
     <Compile Include="Utils\Common.cs" />
@@ -141,6 +148,14 @@
     <Compile Include="View\StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
+    <Page Include="CustomDialogs\AddFavoriteDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CustomDialogs\MyFolderSelectDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

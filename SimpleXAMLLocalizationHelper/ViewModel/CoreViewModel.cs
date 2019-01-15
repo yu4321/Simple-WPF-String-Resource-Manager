@@ -18,6 +18,7 @@ using SimpleXAMLLocalizationHelper.View;
 using SimpleXAMLLocalizationHelper.Messages;
 using GalaSoft.MvvmLight.Messaging;
 using System.Data;
+using SimpleXAMLLocalizationHelper.CustomDialogs;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
 {
@@ -285,6 +286,8 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
+        private bool isFavoriteMode = false;
+
         private string lastSelectedPath;
 
         public ICommand AddCommand { get; set; }
@@ -301,11 +304,10 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         public ICommand ModifyCommandA2 { get; set; }
         public ICommand DeleteCommandA2 { get; set; }
 
+        public ICommand AddFavoriteCommand { get; set; }
+
         public ICommand HomeCommand { get; set; }
         
-
-
-
         #endregion properties and variables
 
         #region constructor
@@ -346,6 +348,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             ChangeLangCommand = new RelayCommand<string>(ExecuteChangeLangCommand);
             ResetCommand = new RelayCommand(() => ExecuteResetCommand());
             HomeCommand = new RelayCommand(() => Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Start)));
+            AddFavoriteCommand = new RelayCommand(() => ExecuteAddFavoriteCommand());
             Messenger.Default.Register<ResetMessage>(this,(x) => ReceiveMessage(x));
             if (!IsInDesignMode)
             {
@@ -409,7 +412,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
             catch (FileNotFoundException)
             {
-                MessageBox.Show("{0}.xaml 파일을 찾을 수 없습니다! ");
+                MessageBox.Show("파일을 찾을 수 없습니다! ");
                 //if (DataItems.Rows.Count <= 0)
                 //{
                 //    //throw;
@@ -488,12 +491,12 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         private string GetFolderPath(bool isfirst = false)
         {
             string sresult;
-            using (var dialog = new CommonOpenFileDialog())
+            using (var dialog = new MyFolderSelectDialog())
             {
                 dialog.IsFolderPicker = true;
                 dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
                 if (isfirst) dialog.Title += "설정에 있는 파일명이 모두 필요합니다.";
-                CommonFileDialogResult result = dialog.ShowDialog();
+                dialog.ShowDialog();
                 try
                 {
                     sresult = dialog.FileName;
@@ -511,11 +514,11 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         private string GetFolderPath(Window basewindow)
         {
             string sresult;
-            using (var dialog = new CommonOpenFileDialog())
+            using (var dialog = new MyFolderSelectDialog())
             {
                 dialog.IsFolderPicker = true;
                 dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
-                CommonFileDialogResult result = dialog.ShowDialog(basewindow);
+                dialog.ShowDialog(basewindow);
                 try
                 {
                     sresult = dialog.FileName;
@@ -952,6 +955,15 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         {
             WorkerViewModel = null;
             new View.AutoEditView().ShowDialog();
+        }
+
+        private void ExecuteAddFavoriteCommand()
+        {
+            var dialog = new AddFavoriteDialog(CurrentFolderPath);
+            dialog.ShowDialog();
+            bool result = dialog.result;
+            if (result) MessageBox.Show("즐겨찾기 등록을 성공했습니다.");
+            else MessageBox.Show("즐겨찾기 등록을 실패했습니다.");
         }
 
         #endregion command methods

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using SimpleXAMLLocalizationHelper.Messages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +25,7 @@ namespace SimpleXAMLLocalizationHelper.View
         public AutoEditExecuteView()
         {
             InitializeComponent();
+            Messenger.Default.Send<ChangeWindowStateMessage>(new ChangeWindowStateMessage());
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)

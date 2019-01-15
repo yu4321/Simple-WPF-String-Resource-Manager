@@ -3,5 +3,8 @@
     "USE_LANGUAGES": [
         "Korean",
         "English"
-    ]
+    ],
+    "FAVORITES": {
+        "Default": "C://Languages"
+    }
 }

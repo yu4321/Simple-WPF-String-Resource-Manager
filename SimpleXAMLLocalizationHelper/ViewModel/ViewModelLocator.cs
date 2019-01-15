@@ -50,8 +50,14 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         {
             get
             {
-                if (ServiceLocator.Current.GetInstance<MainViewModel>().CurrentViewModel is CoreViewModel) return ServiceLocator.Current.GetInstance<MainViewModel>().CurrentViewModel as CoreViewModel;
-                else return ServiceLocator.Current.GetInstance<CoreViewModel>();
+                if (ServiceLocator.Current.GetInstance<MainViewModel>().CurrentViewModel is CoreViewModel)
+                {
+                    return ServiceLocator.Current.GetInstance<MainViewModel>().CurrentViewModel as CoreViewModel;
+                }
+                else
+                {
+                    return ServiceLocator.Current.GetInstance<CoreViewModel>();
+                }
             }
         }
 

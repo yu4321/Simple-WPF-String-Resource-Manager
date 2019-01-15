@@ -10,7 +10,7 @@
              >
     <UserControl.Resources>
         <ControlTemplate x:Key="InputBoxTemplate" TargetType="Button">
-            <Grid Width="260" Height="35" Margin="0,5">
+            <Grid Width="260" Height="38" Margin="0,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition Width="180" />
@@ -19,7 +19,7 @@
                     <TextBlock Text="{Binding Language, FallbackValue=Korean}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="1" />
                 </Grid>
                 <Grid Grid.Column="1">
-                    <TextBox Text="{Binding Content}" Margin="1" />
+                    <TextBox Text="{Binding Content}" TextWrapping="Wrap" AcceptsReturn="true" Margin="1" />
                 </Grid>
             </Grid>
         </ControlTemplate>
@@ -40,7 +40,8 @@
             </DataGrid>
             <Button Content="정렬 복구" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="75" Click="DataGridSortReset"/>
             <Button Content=" 자동 편집기 열기 " HorizontalAlignment="Left" Margin="95,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding OpenAutoEditCommand}"/>
-            <Label Content="{Binding CurrentFolderPath,FallbackValue=현재 선택된 폴더 없음}" HorizontalAlignment="Left" Margin="205,8,0,0" VerticalAlignment="Top" Padding="1" Width="Auto" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            <TextBox x:Name="TB1" Text="{Binding CurrentFolderPath,FallbackValue=현재 선택된 폴더 없음}" IsReadOnly="True" HorizontalAlignment="Left" Margin="205,8,0,0" VerticalAlignment="Top" Padding="1" Width="302" Height="20" IsReadOnlyCaretVisible="True" TextChanged="TextChanged" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
+            <Button Content=" 즐겨찾기 등록 " HorizontalAlignment="Left" Margin="512,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding AddFavoriteCommand}"/>
             <Button Content=" 새로 열기 " HorizontalAlignment="Left" Margin="606,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding OpenFolderSelectCommand}"/>
         </Grid>
         <Grid Grid.Column="1" VerticalAlignment="Bottom" x:Name="c2_Utils">

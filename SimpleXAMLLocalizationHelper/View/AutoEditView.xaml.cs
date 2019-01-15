@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Messaging;
+using SimpleXAMLLocalizationHelper.Messages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,12 +21,24 @@ namespace SimpleXAMLLocalizationHelper.View
     /// </summary>
     public partial class AutoEditView : Window
     {
+        private const int GWL_STYLE = -16;
+        private const int WS_SYSMENU = 0x80000;
+        [System.Runtime.InteropServices.DllImport("user32.dll", SetLastError = true)]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
         public AutoEditView()
         {
             InitializeComponent();
-            Dispatcher.Invoke(() => {
-                ResetTBScrolls();
-            });
+            Messenger.Default.Register<ChangeWindowStateMessage>(this, (x) => ReceiveWindowStateMessage());
+            Loaded += AutoEditView_Loaded;
+        }
+
+        private void AutoEditView_Loaded(object sender, RoutedEventArgs e)
+        {
+            ResetTBScrolls();
+
         }
 
         private void ResetTBScrolls()
@@ -46,6 +60,12 @@ namespace SimpleXAMLLocalizationHelper.View
         private void TextChanged(object sender, TextChangedEventArgs e)
         {
             ResetTBScrolls();
+        }
+
+        private void ReceiveWindowStateMessage()
+        {
+            var hwnd = new System.Windows.Interop.WindowInteropHelper(this).Handle;
+            SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) & ~WS_SYSMENU);
         }
     }
 }

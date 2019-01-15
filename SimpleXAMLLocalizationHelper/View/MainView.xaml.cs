@@ -62,6 +62,21 @@ namespace SimpleXAMLLocalizationHelper.View
         {
             e.Handled = true;
         }
-      
+
+        private void ResetTBScrolls()
+        {
+            if (TB1 != null)
+            {
+                TB1.CaretIndex = TB1.Text.Length;
+                var rect = TB1.GetRectFromCharacterIndex(TB1.CaretIndex);
+                TB1.ScrollToHorizontalOffset(rect.Right);
+            }
+        }
+
+        private void TextChanged(object sender, TextChangedEventArgs e)
+        {
+            ResetTBScrolls();
+        }
+
     }
 }

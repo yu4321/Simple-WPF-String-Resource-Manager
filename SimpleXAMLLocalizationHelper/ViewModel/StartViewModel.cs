@@ -19,8 +19,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
     /// </summary>
     public class StartViewModel : ViewModelBase
     {
-        public const string defaultSetting = "{\"LAST_LOGIN\": \"2019-01-01T00:00:00\",\"USE_LANGUAGES\": [\"Korean\",\"English\"]}";
-
         private string _verText;
         public string VerText
         {
@@ -103,65 +101,69 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void LoadSettings()
         {
-            var settings = new JsonSerializerSettings
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                MissingMemberHandling = MissingMemberHandling.Ignore
-            };
+            newSetting = App.LoadSettings();
+            LastUsed=App.LastUsed;
+            //var settings = new JsonSerializerSettings
+            //{
+            //    NullValueHandling = NullValueHandling.Ignore,
+            //    MissingMemberHandling = MissingMemberHandling.Ignore
+            //};
 
-            using (FileStream fs=new FileStream("Setting.json", FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            {
-                try
-                {
-                    StreamReader sr = new StreamReader(fs);
-                    newSetting = JsonConvert.DeserializeObject<SettingModel>(sr.ReadToEnd());
-                    App.LanguageList = newSetting.USE_LANGUAGES;
-                }
-                catch(Exception e)
-                {
-                    WriteDefaultSettings();
-                    MessageBox.Show("설정 파일이 손상되었습니다. 설정을 초기화하였습니다.");
-                    App.LoggerEx.Warn(e.Message);
-                    throw;
-                }
-            }
-            WriteTimeStamptoSetting();
+            //using (FileStream fs=new FileStream("Setting.json", FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            //{
+            //    try
+            //    {
+            //        StreamReader sr = new StreamReader(fs);
+            //        newSetting = JsonConvert.DeserializeObject<SettingModel>(sr.ReadToEnd());
+            //        App.LanguageList = newSetting.USE_LANGUAGES;
+            //        App.Favorites = newSetting.FAVORITES;
+            //    }
+            //    catch(Exception e)
+            //    {
+            //        WriteDefaultSettings();
+            //        MessageBox.Show("설정 파일이 손상되었습니다. 설정을 초기화하였습니다.");
+            //        App.LoggerEx.Warn(e.Message);
+            //        throw;
+            //    }
+            //}
+            //WriteTimeStamptoSetting();
         }
         
-        private void WriteTimeStamptoSetting()
-        {
-            using (StreamWriter sw = new StreamWriter("Setting.json"))
-            {
-                try
-                {
-                    if (newSetting != null)
-                    {
-                        newSetting.LAST_LOGIN = DateTime.Now.ToLocalTime();
-                        LastUsed = newSetting.LAST_LOGIN.ToString();
-                        string serialized = JsonConvert.SerializeObject(newSetting,Formatting.Indented);
-                        sw.Write(serialized);
-                    }
-                }
-                catch
-                {
+        //private void WriteTimeStamptoSetting()
+        //{
+        //    using (StreamWriter sw = new StreamWriter("Setting.json"))
+        //    {
+        //        try
+        //        {
+        //            if (newSetting != null)
+        //            {
+        //                newSetting.LAST_LOGIN = DateTime.Now.ToLocalTime();
+        //                LastUsed = newSetting.LAST_LOGIN.ToString();
+        //                string serialized = JsonConvert.SerializeObject(newSetting,Formatting.Indented);
+        //                sw.Write(serialized);
+        //            }
+        //        }
+        //        catch
+        //        {
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
         private void WriteDefaultSettings()
         {
-            using (StreamWriter sw = new StreamWriter("Setting.json"))
-            {
-                try
-                {
-                    sw.Write(defaultSetting.ToString());
-                }
-                catch
-                {
-                    
-                }
-            }
+            //using (StreamWriter sw = new StreamWriter("Setting.json"))
+            //{
+            //    try
+            //    {
+            //        sw.Write(defaultSetting.ToString());
+            //    }
+            //    catch
+            //    {
+
+            //    }
+            //}
+            App.WriteDefaultSettings();
         }
     }
 }

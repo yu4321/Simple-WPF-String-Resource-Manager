@@ -10,5 +10,6 @@ namespace SimpleXAMLLocalizationHelper.Model
     {
         public DateTime LAST_LOGIN { get; set; }
         public List<string> USE_LANGUAGES { get; set; }
+        public Dictionary<string,string> FAVORITES { get; set; }
     }
 }

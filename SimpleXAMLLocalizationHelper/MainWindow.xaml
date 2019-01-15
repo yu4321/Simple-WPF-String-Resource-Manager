@@ -11,6 +11,6 @@
         DataContext="{Binding Main, Source={StaticResource Locator}}">
 
     <Grid>
-        <ContentControl Content="{Binding CurrentViewModel}"></ContentControl>
+        <ContentControl Content="{Binding CurrentViewModel}" />
     </Grid>
 </Window>

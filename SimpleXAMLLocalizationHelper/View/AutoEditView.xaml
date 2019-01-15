@@ -8,7 +8,8 @@
         mc:Ignorable="d"
         DataContext="{Binding Core, Source={StaticResource Locator}}" 
         Height="460" Width="700"
-        Title="AutoEditView" >
+        Title="AutoEditView" 
+        WindowStyle="ToolWindow">
     <Window.Resources>
         <c:InverseConverter x:Key="InvrConv" />
     </Window.Resources>
