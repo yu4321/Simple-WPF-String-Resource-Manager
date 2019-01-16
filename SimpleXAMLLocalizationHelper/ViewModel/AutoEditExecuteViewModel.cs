@@ -91,8 +91,9 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             workList = _worklist;
             CloseCommand = new RelayCommand(() =>
               {
-                  (from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First().Close();
-                  Messenger.Default.Send<ResetMessage>(new ResetMessage());
+                  //(ServiceLocator.Current.GetInstance<MainViewModel>().CurrentViewModel as CoreViewModel).WorkerViewModel = null;
+                  //(from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First().Close();
+                  Messenger.Default.Send<ResetMessage>(new ResetMessage(true));
                   GC.Collect();
               });
             ReadyWork();

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,12 @@ namespace SimpleXAMLLocalizationHelper.View
         {
             InitializeComponent();
             DG.ItemsSource = DI;
+        }
+
+        public DataGridWindowView(DataTable DI)
+        {
+            InitializeComponent();
+            DG.ItemsSource = DI.AsDataView();
         }
     }
 }

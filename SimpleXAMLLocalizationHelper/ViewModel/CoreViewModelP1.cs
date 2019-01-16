@@ -31,7 +31,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         private ObservableCollection<DataItem> _newItems;
 
         public ObservableCollection<DataItem> NewItems
-
         {
             get
             {
@@ -47,7 +46,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         private DataTable _newItemsDG;
 
         public DataTable NewItemsDG
-
         {
             get
             {
@@ -57,6 +55,32 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             set
             {
                 Set(nameof(NewItemsDG), ref _newItemsDG, value);
+            }
+        }
+
+        private DataRowView _nowIndexLeft;
+        public DataRowView NowIndexLeft
+        {
+            get
+            {
+                return _nowIndexLeft;
+            }
+            set
+            {
+                Set(nameof(NowIndexLeft), ref _nowIndexLeft, value);
+            }
+        }
+
+        private DataRowView _nowIndexRight;
+        public DataRowView NowIndexRight
+        {
+            get
+            {
+                return _nowIndexRight;
+            }
+            set
+            {
+                Set(nameof(NowIndexRight), ref _nowIndexRight, value);
             }
         }
 
@@ -369,11 +393,11 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         {
             if (param == "DG1")
             {
-                new DataGridWindowView(Items).ShowDialog();
+                new DataGridWindowView(DataItems).ShowDialog();
             }
             else
             {
-                new DataGridWindowView(NewItems).ShowDialog();
+                new DataGridWindowView(NewItemsDG).ShowDialog();
             }
         }
 
@@ -408,6 +432,42 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 toreplace = MakeModifyList(DataItems, NewItemsDG);
             }
             catch(Exception e)
+            {
+                App.LoggerEx.Warn(e.Message);
+            }
+        }
+
+        private void ReopenBaseFile(string oldpath)
+        {
+            try
+            {
+                string folderpath = oldpath;
+                InitializebyFile(folderpath.Substring(0, folderpath.Length - 1), NewItemsDG);
+                IsSetComplete = true;
+                CurrentBase = "현재 비교: 파일";
+                IsFolderMode = false;
+                CurrentNewPath = folderpath.Substring(0, folderpath.Length - 1);
+                toreplace = MakeModifyList(DataItems, NewItemsDG);
+            }
+            catch (Exception e)
+            {
+                App.LoggerEx.Warn(e.Message);
+            }
+        }
+
+        private void ReopenBaseFolder(string oldpath)
+        {
+            try
+            {
+                string folderpath = oldpath;
+                InitializebyFolder(folderpath, NewItemsDG);
+                IsSetComplete = true;
+                CurrentBase = "현재 비교: 폴더";
+                IsFolderMode = true;
+                CurrentNewPath = folderpath;
+                toreplace = MakeModifyList(DataItems, NewItemsDG);
+            }
+            catch (Exception e)
             {
                 App.LoggerEx.Warn(e.Message);
             }

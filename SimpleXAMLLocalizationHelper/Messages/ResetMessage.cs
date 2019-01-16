@@ -8,6 +8,10 @@ namespace SimpleXAMLLocalizationHelper.Messages
 {
     public class ResetMessage
     {
-
+        public bool isSoftReset;
+        public ResetMessage(bool _isSoftReset = false)
+        {
+            isSoftReset = _isSoftReset;
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public partial class CoreViewModel : ViewModelBase
+    public partial class CoreViewModel : ViewModelBase, IDisposable
     {
         /// <summary>
         /// Initializes a new instance of the CoreViewModel class.
@@ -286,8 +286,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private bool isFavoriteMode = false;
-
         private string lastSelectedPath;
 
         public ICommand AddCommand { get; set; }
@@ -388,7 +386,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private void MakeTables()
+        private void MakeTables(bool isSoftReset=false)
         {
             List<string> filenames = LangList.ToList();
             Dictionary<string, XElement[]> elements = new Dictionary<string, XElement[]>();
@@ -436,7 +434,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 return;
             }
 
-            Resets();
+            Resets(isSoftReset);
 
             if (DataItems.Columns.Count <= 0)
             {
@@ -470,22 +468,28 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             if(InputBoxes.Count<=0)MakeInputBoxes();
         }
 
-        private void Resets()
+        private void Resets(bool isSoftReset=false)
         {
-            Items.Clear();
-            ItemsA1.Clear();
-            nowindex = null;
-            nowindex_a1 = null;
-            nowindex_a2 = null;
-            SelectedID = null;
-            Kor = null;
-            Eng = null;
-            Jpn = null;
-            Chns = null;
-            ID = null;
-            CurrentFolderPath = lastSelectedPath;
-            ExecuteResetCommand();
-            InputBoxes.Clear();
+            if (isSoftReset)
+            {
+
+            }
+            else
+            {
+                ItemsA1.Clear();
+                nowindex = null;
+                nowindex_a1 = null;
+                nowindex_a2 = null;
+                SelectedID = null;
+                Kor = null;
+                Eng = null;
+                Jpn = null;
+                Chns = null;
+                ID = null;
+                CurrentFolderPath = lastSelectedPath;
+                ExecuteResetCommand();
+                InputBoxes.Clear();
+            }
         }
 
         private string GetFolderPath(bool isfirst = false)
@@ -724,7 +728,26 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void ReceiveMessage(ResetMessage action)
         {
-            MakeTables();
+            WorkerViewModel = null;
+
+            if (action.isSoftReset)
+            {
+                string oldpath = CurrentNewPath;
+                MakeTables();
+                if (IsFolderMode)
+                {
+                    ReopenBaseFolder(oldpath);
+                }
+                else
+                {
+                    ReopenBaseFile(oldpath+"/");
+                }
+                //toreplace = MakeModifyList(DataItems, NewItemsDG);
+            }
+            else
+            {
+                MakeTables(action.isSoftReset);
+            }
         }
 
         #endregion
@@ -962,9 +985,54 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             var dialog = new AddFavoriteDialog(CurrentFolderPath);
             dialog.ShowDialog();
             bool result = dialog.result;
-            if (result) MessageBox.Show("즐겨찾기 등록을 성공했습니다.");
-            else MessageBox.Show("즐겨찾기 등록을 실패했습니다.");
+            if (result)
+            {
+                MessageBox.Show("즐겨찾기 등록을 성공했습니다.");
+            }
+            else
+            {
+                MessageBox.Show("즐겨찾기 등록을 실패했습니다.");
+            }
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // 중복 호출을 검색하려면
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _dataItems.Clear();
+                    _dataItems.Dispose();
+                    _newItemsDG.Clear();
+                    _newItemsDG.Dispose();
+                    toreplace.Dispose();
+                }
+
+                // TODO: 관리되지 않는 리소스(관리되지 않는 개체)를 해제하고 아래의 종료자를 재정의합니다.
+                // TODO: 큰 필드를 null로 설정합니다.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
+        // ~CoreViewModel() {
+        //   // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
+        //   Dispose(false);
+        // }
+
+        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
+        public void Dispose()
+        {
+            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
+            Dispose(true);
+            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
 
         #endregion command methods
     }
