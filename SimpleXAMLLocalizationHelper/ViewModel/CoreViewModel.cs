@@ -645,25 +645,39 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private void SaveFiles(List<string> strdic)
+        private void SaveFiles(Dictionary<string,string> strdic)
         {
             try
             {
-                for(int i=0;i<LangList.Count;i++)
+                foreach(var x in strdic)
                 {
                     try
                     {
-                        using (StreamWriter wr = new StreamWriter(ResourcePath + LangList[i] + ".xaml"))
+                        using(StreamWriter wr = new StreamWriter(ResourcePath + x.Key + ".xaml"))
                         {
-                            strdic[i]= ReplaceCarriageReturns_String(strdic[i]);
-                            wr.Write(strdic[i]);
+                            wr.Write(ReplaceCarriageReturns_String(x.Value));
                         }
                     }
                     catch
                     {
-                        MessageBox.Show(LangList[i]+".xaml 파일의 저장에 실패하였습니다.");
+                        MessageBox.Show(x.Key + ".xaml 파일의 저장에 실패하였습니다.");
                     }
                 }
+                //for(int i=0;i<LangList.Count;i++)
+                //{
+                //    try
+                //    {
+                //        using (StreamWriter wr = new StreamWriter(ResourcePath + LangList[i] + ".xaml"))
+                //        {
+                //            strdic[i]= ReplaceCarriageReturns_String(strdic[i]);
+                //            wr.Write(strdic[i]);
+                //        }
+                //    }
+                //    catch
+                //    {
+                //        MessageBox.Show(LangList[i]+".xaml 파일의 저장에 실패하였습니다.");
+                //    }
+                //}
             }
             catch
             {
@@ -673,13 +687,14 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         public void SaveFiles(Dictionary<string,XDocument> xDocs)
         {
-            List<string> param = new List<string>();
+            //List<string> param = new List<string>();
+            Dictionary<string, string> param = new Dictionary<string, string>();
             try
             {
                 foreach(string x in LangList)
                 {
                     xDocs[x]= ReplaceCarriageReturns_XDoc(xDocs[x]);
-                    param.Add(xDocs[x].ToString());
+                    param.Add(x,xDocs[x].ToString());
                 }
             }
             catch (Exception e)
