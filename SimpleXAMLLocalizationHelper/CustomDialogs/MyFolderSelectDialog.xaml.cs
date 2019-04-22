@@ -45,9 +45,12 @@ namespace SimpleXAMLLocalizationHelper.CustomDialogs
 
         private void selectfav_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine(((KeyValuePair < string, string > )listBox.SelectedItem).Key);
-            FileName = ((KeyValuePair<string, string>)listBox.SelectedItem).Value;
-            this.Close();
+            if (listBox.SelectedItem != null)
+            {
+                Console.WriteLine(((KeyValuePair<string, string>)listBox.SelectedItem).Key);
+                FileName = ((KeyValuePair<string, string>)listBox.SelectedItem).Value;
+                this.Close();
+            }
         }
 
         private void selectnew_Click(object sender, RoutedEventArgs e)

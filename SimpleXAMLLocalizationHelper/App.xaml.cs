@@ -43,7 +43,7 @@ namespace SimpleXAMLLocalizationHelper
                 }
                 catch
                 {
-
+                    App.Logger.Info("설정 저장 실패");
                 }
             }
         }
@@ -56,25 +56,28 @@ namespace SimpleXAMLLocalizationHelper
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
 
-            SettingModel newSetting;
+            SettingModel newSetting ;
 
-            using (FileStream fs = new FileStream("Setting.json", FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            try
             {
-                try
+                using (FileStream fs = new FileStream("Setting.json", FileMode.OpenOrCreate, FileAccess.Read))
+                //using(StreamReader sr=new StreamReader("Setting.json"))
                 {
                     StreamReader sr = new StreamReader(fs);
+                    //var xxxx = sr.ReadToEnd();
                     newSetting = JsonConvert.DeserializeObject<SettingModel>(sr.ReadToEnd());
                     App.LanguageList = newSetting.USE_LANGUAGES;
                     App.Favorites = newSetting.FAVORITES;
                 }
-                catch (Exception e)
-                {
-                    WriteDefaultSettings();
-                    MessageBox.Show("설정 파일이 손상되었습니다. 설정을 초기화하였습니다.");
-                    App.LoggerEx.Warn(e.Message);
-                    throw;
-                }
             }
+            catch (Exception e)
+            {
+                WriteDefaultSettings();
+                MessageBox.Show("설정 파일이 손상되었습니다. 설정을 초기화하였습니다.");
+                App.LoggerEx.Warn(e.Message);
+                throw;
+            }
+
             WriteTimeStamptoSetting(newSetting);
             lastSetting = newSetting;
             return newSetting;
@@ -94,9 +97,9 @@ namespace SimpleXAMLLocalizationHelper
                         sw.Write(serialized);
                     }
                 }
-                catch
+                catch(Exception e)
                 {
-
+                    App.Logger.Info("마지막 로그인 시간 저장 실패 "+e.Message);
                 }
             }
         }
@@ -109,9 +112,9 @@ namespace SimpleXAMLLocalizationHelper
                 {
                     sw.Write(defaultSetting.ToString());
                 }
-                catch
+                catch(Exception e)
                 {
-
+                    App.Logger.Info("기본 설정 저장 실패 " + e.Message);
                 }
             }
         }

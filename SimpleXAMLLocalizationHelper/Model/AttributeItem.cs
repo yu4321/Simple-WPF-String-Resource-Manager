@@ -52,5 +52,14 @@ namespace SimpleXAMLLocalizationHelper.Model
             }
         }
 
+        public override string ToString()
+        {
+            if(Name!=null && Content != null)
+            {
+                return $"{Name} | {Content}";
+            }
+            return base.ToString();
+        }
+
     }
 }

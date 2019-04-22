@@ -1,9 +1,12 @@
-﻿using SimpleXAMLLocalizationHelper.Model;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using SimpleXAMLLocalizationHelper.CustomDialogs;
+using SimpleXAMLLocalizationHelper.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Xml.Linq;
 
 namespace SimpleXAMLLocalizationHelper.Utils
@@ -15,26 +18,6 @@ namespace SimpleXAMLLocalizationHelper.Utils
         public static string ResourcePath = @"C:\Languages\";
 
         #region methods
-
-        public static void Addifnotcontains(ArrayList name, XElement[] xarray, ref DataItem dt, int langcase)
-        {
-            if (name.Contains(dt.ID))
-            {
-                string dtid = dt.ID;
-                var query = from w in xarray where w.Attribute(xmn + "Key").Value == dtid select w;
-                try
-                {
-                    if (langcase == 0) dt.Kor = query.Single<XElement>().Value;
-                    if (langcase == 1) dt.Eng = query.Single<XElement>().Value;
-                    if (langcase == 2) dt.Jpn = query.Single<XElement>().Value;
-                    if (langcase == 3) dt.Chns = query.Single<XElement>().Value;
-                }
-                catch (Exception e)
-                {
-                    App.LoggerEx.Warn(e.Message);
-                }
-            }
-        }
 
         public static void ReplaceCarriageReturns_XDoc(ref XDocument xd)
         {
@@ -123,7 +106,10 @@ namespace SimpleXAMLLocalizationHelper.Utils
                 {
                     XElement xle = new XElement(smn + "String", newvalue.Replace("\r\n", "&#xA;").Replace("&amp;#xA;", "&#xA;"));
                     xle.Add(new XAttribute(xmn + "Key", newID));
-                    xle.Add(new XAttribute(XNamespace.Xml + "space", "preserve"));
+                    if (newvalue.Contains(" "))
+                    {
+                        xle.Add(new XAttribute(XNamespace.Xml + "space", "preserve"));
+                    }
                     if (addplace == (XElement)xd.FirstNode) addplace.Add(xle);
                     else addplace.AddAfterSelf(xle);
                     result = true;
@@ -331,6 +317,92 @@ namespace SimpleXAMLLocalizationHelper.Utils
                 result = "결과를 찾지 못하였습니다.";
             }
             return result;
+        }
+
+        public static string GetFolderPath(bool isfirst = false)
+        {
+            string sresult;
+            using (var dialog = new MyFolderSelectDialog())
+            {
+                dialog.IsFolderPicker = true;
+                dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
+                if (isfirst) dialog.Title += "설정에 있는 파일명이 모두 필요합니다.";
+                dialog.ShowDialog();
+                try
+                {
+                    sresult = dialog.FileName;
+                }
+                catch
+                {
+                    sresult = "";
+                }
+            }
+            sresult += "\\";
+            return sresult;
+        }
+
+        public static string GetFolderPath(Window basewindow)
+        {
+            string sresult;
+            using (var dialog = new MyFolderSelectDialog())
+            {
+                dialog.IsFolderPicker = true;
+                dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
+                dialog.ShowDialog(basewindow);
+                try
+                {
+                    sresult = dialog.FileName;
+                }
+                catch
+                {
+                    sresult = "";
+                }
+            }
+            sresult += "\\";
+            return sresult;
+        }
+
+        public static string GetFilePath()
+        {
+            string sresult;
+            using (var dialog = new CommonOpenFileDialog())
+            {
+                dialog.Title = "언어 리소스 파일을 선택해주세요.";
+                dialog.Filters.Add(new CommonFileDialogFilter("언어 리소스 파일", ".xaml"));
+                CommonFileDialogResult result = dialog.ShowDialog();
+                try
+                {
+                    sresult = dialog.FileName;
+                    //lastSelectedPath = sresult;
+                }
+                catch
+                {
+                    sresult = "";
+                }
+            }
+            sresult += "\\";
+            return sresult;
+        }
+
+        public static string GetFilePath(Window basewindow)
+        {
+            string sresult;
+            using (var dialog = new CommonOpenFileDialog())
+            {
+                dialog.Title = "언어 리소스 파일을 선택해주세요.";
+                dialog.Filters.Add(new CommonFileDialogFilter("언어 리소스 파일", ".xaml"));
+                CommonFileDialogResult result = dialog.ShowDialog(basewindow);
+                try
+                {
+                    sresult = dialog.FileName;
+                }
+                catch
+                {
+                    sresult = "";
+                }
+            }
+            sresult += "\\";
+            return sresult;
         }
 
         #endregion methods

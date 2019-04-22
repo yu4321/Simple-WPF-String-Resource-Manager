@@ -22,11 +22,6 @@ namespace SimpleXAMLLocalizationHelper.View
     /// </summary>
     public partial class DataGridWindowView : Window
     {
-        public DataGridWindowView(ObservableCollection<DataItem> DI)
-        {
-            InitializeComponent();
-            DG.ItemsSource = DI;
-        }
 
         public DataGridWindowView(DataTable DI)
         {

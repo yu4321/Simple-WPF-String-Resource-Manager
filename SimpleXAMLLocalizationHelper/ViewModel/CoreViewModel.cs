@@ -24,16 +24,9 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 {
     /// <summary>
     /// 주 뷰모델 - 메인 윈도우 관련 요소들
-    /// <para>
-    /// See http://www.galasoft.ch/mvvm
-    /// </para>
     /// </summary>
     public partial class CoreViewModel : ViewModelBase, IDisposable
     {
-        /// <summary>
-        /// Initializes a new instance of the CoreViewModel class.
-        /// </summary>
-
         #region properties and variables
 
 
@@ -48,62 +41,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             set
             {
                 Set(nameof(InputBoxes), ref _inputBoxes, value);
-            }
-        }
-
-        private string _Kor;
-
-        public string Kor
-        {
-            get
-            {
-                return _Kor;
-            }
-            set
-            {
-                Set(nameof(Kor), ref _Kor, value);
-            }
-        }
-
-        private string _Eng;
-
-        public string Eng
-        {
-            get
-            {
-                return _Eng;
-            }
-            set
-            {
-                Set(nameof(Eng), ref _Eng, value);
-            }
-        }
-
-        private string _Jpn;
-
-        public string Jpn
-        {
-            get
-            {
-                return _Jpn;
-            }
-            set
-            {
-                Set(nameof(Jpn), ref _Jpn, value);
-            }
-        }
-
-        private string _Chns;
-
-        public string Chns
-        {
-            get
-            {
-                return _Chns;
-            }
-            set
-            {
-                Set(nameof(Chns), ref _Chns, value);
             }
         }
 
@@ -177,24 +114,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private ObservableCollection<DataItem> _Items;
-
-        public ObservableCollection<DataItem> Items
-
-        {
-            get
-            {
-                return _Items;
-            }
-
-            set
-            {
-                Set(nameof(Items), ref _Items, value);
-            }
-        }
-
-        
-
         private ObservableCollection<AttributeItem> _ItemsA1;
 
         public ObservableCollection<AttributeItem> ItemsA1
@@ -242,8 +161,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        
-
         private string _currentFolderPath= "현재 선택된 폴더 없음";
         public string CurrentFolderPath
         {
@@ -273,7 +190,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private ObservableCollection<string> _langList = new ObservableCollection<string>();
 
-        //private List<string> LangList = new List<string>();
         public ObservableCollection<string> LangList
         {
             get
@@ -313,10 +229,8 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         public CoreViewModel()
         {
             MakeLangList();
-            Items = new ObservableCollection<DataItem>();
             ItemsA1 = new ObservableCollection<AttributeItem>();
             ItemsA2 = new ObservableCollection<AttributeItem>();
-            NewItems = new ObservableCollection<DataItem>();
             ItemsA2.Add(new AttributeItem()
             {
                 Content = new XAttribute(XNamespace.Xml + "space", "preserve")
@@ -348,6 +262,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             HomeCommand = new RelayCommand(() => Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Start)));
             AddFavoriteCommand = new RelayCommand(() => ExecuteAddFavoriteCommand());
             Messenger.Default.Register<ResetMessage>(this,(x) => ReceiveMessage(x));
+            Messenger.Default.Register<ReplaceSelectedMessage>(this, (x) => ReceiveMessage(x));
             if (!IsInDesignMode)
             {
                 SetFolderPath(true);
@@ -362,11 +277,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void MakeLangList()
         {
-            //FOR TEST
-            //LangList.Add(Properties.Settings.Default.KorFileName);
-            //LangList.Add(Properties.Settings.Default.EngFileName);
-            //LangList.Add(Properties.Settings.Default.JpnFileName);
-            //LangList.Add(Properties.Settings.Default.ChnsFileName);
             foreach(var x in App.LanguageList)
             {
                 LangList.Add(x);
@@ -411,26 +321,11 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             catch (FileNotFoundException)
             {
                 MessageBox.Show("파일을 찾을 수 없습니다! ");
-                //if (DataItems.Rows.Count <= 0)
-                //{
-                //    //throw;
-                //    //Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Start));
-                //    return;
-                //    //Application.Current.Shutdown();
-                //}
-                //return;
                 return;
             }
             catch
             {
                 MessageBox.Show("올바른 폴더를 선택해주세요!\n폴더 안에 들어가는 각 파일 명은 설정과 동일해야 합니다. 또한 각 요소는 모두 어트리뷰트 \"x:Key\"를 고유한 값으로 지니고 있어야 합니다.");
-                //if (DataItems.Rows.Count <= 0)
-                //{
-                //    //throw;
-                //    //Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Start));
-                //    return;
-                //    //Application.Current.Shutdown();
-                //}
                 return;
             }
 
@@ -481,10 +376,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 nowindex_a1 = null;
                 nowindex_a2 = null;
                 SelectedID = null;
-                Kor = null;
-                Eng = null;
-                Jpn = null;
-                Chns = null;
                 ID = null;
                 CurrentFolderPath = lastSelectedPath;
                 ExecuteResetCommand();
@@ -492,156 +383,100 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private string GetFolderPath(bool isfirst = false)
-        {
-            string sresult;
-            using (var dialog = new MyFolderSelectDialog())
-            {
-                dialog.IsFolderPicker = true;
-                dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
-                if (isfirst) dialog.Title += "설정에 있는 파일명이 모두 필요합니다.";
-                dialog.ShowDialog();
-                try
-                {
-                    sresult = dialog.FileName;
-                    lastSelectedPath = sresult;
-                }
-                catch
-                {
-                    sresult = "";
-                }
-            }
-            sresult += "\\";
-            return sresult;
-        }
+        //private string GetFolderPath(bool isfirst = false)
+        //{
+        //    string sresult;
+        //    using (var dialog = new MyFolderSelectDialog())
+        //    {
+        //        dialog.IsFolderPicker = true;
+        //        dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
+        //        if (isfirst) dialog.Title += "설정에 있는 파일명이 모두 필요합니다.";
+        //        dialog.ShowDialog();
+        //        try
+        //        {
+        //            sresult = dialog.FileName;
+        //            lastSelectedPath = sresult;
+        //        }
+        //        catch
+        //        {
+        //            sresult = "";
+        //        }
+        //    }
+        //    sresult += "\\";
+        //    return sresult;
+        //}
 
-        private string GetFolderPath(Window basewindow)
-        {
-            string sresult;
-            using (var dialog = new MyFolderSelectDialog())
-            {
-                dialog.IsFolderPicker = true;
-                dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
-                dialog.ShowDialog(basewindow);
-                try
-                {
-                    sresult = dialog.FileName;
-                }
-                catch
-                {
-                    sresult = "";
-                }
-            }
-            sresult += "\\";
-            return sresult;
-        }
+        //private string GetFolderPath(Window basewindow)
+        //{
+        //    string sresult;
+        //    using (var dialog = new MyFolderSelectDialog())
+        //    {
+        //        dialog.IsFolderPicker = true;
+        //        dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
+        //        dialog.ShowDialog(basewindow);
+        //        try
+        //        {
+        //            sresult = dialog.FileName;
+        //        }
+        //        catch
+        //        {
+        //            sresult = "";
+        //        }
+        //    }
+        //    sresult += "\\";
+        //    return sresult;
+        //}
 
-        private string GetFilePath()
-        {
-            string sresult;
-            using (var dialog = new CommonOpenFileDialog())
-            {
-                dialog.Title = "언어 리소스 파일을 선택해주세요.";
-                dialog.Filters.Add(new CommonFileDialogFilter("언어 리소스 파일", ".xaml"));
-                CommonFileDialogResult result = dialog.ShowDialog();
-                try
-                {
-                    sresult = dialog.FileName;
-                    lastSelectedPath = sresult;
-                }
-                catch
-                {
-                    sresult = "";
-                }
-            }
-            sresult += "\\";
-            return sresult;
-        }
+        //private string GetFilePath()
+        //{
+        //    string sresult;
+        //    using (var dialog = new CommonOpenFileDialog())
+        //    {
+        //        dialog.Title = "언어 리소스 파일을 선택해주세요.";
+        //        dialog.Filters.Add(new CommonFileDialogFilter("언어 리소스 파일", ".xaml"));
+        //        CommonFileDialogResult result = dialog.ShowDialog();
+        //        try
+        //        {
+        //            sresult = dialog.FileName;
+        //            //lastSelectedPath = sresult;
+        //        }
+        //        catch
+        //        {
+        //            sresult = "";
+        //        }
+        //    }
+        //    sresult += "\\";
+        //    return sresult;
+        //}
 
-        private string GetFilePath(Window basewindow)
-        {
-            string sresult;
-            using (var dialog = new CommonOpenFileDialog())
-            {
-                dialog.Title = "언어 리소스 파일을 선택해주세요.";
-                dialog.Filters.Add(new CommonFileDialogFilter("언어 리소스 파일", ".xaml"));
-                CommonFileDialogResult result = dialog.ShowDialog(basewindow);
-                try
-                {
-                    sresult = dialog.FileName;
-                }
-                catch
-                {
-                    sresult = "";
-                }
-            }
-            sresult += "\\";
-            return sresult;
-        }
+        //private string GetFilePath(Window basewindow)
+        //{
+        //    string sresult;
+        //    using (var dialog = new CommonOpenFileDialog())
+        //    {
+        //        dialog.Title = "언어 리소스 파일을 선택해주세요.";
+        //        dialog.Filters.Add(new CommonFileDialogFilter("언어 리소스 파일", ".xaml"));
+        //        CommonFileDialogResult result = dialog.ShowDialog(basewindow);
+        //        try
+        //        {
+        //            sresult = dialog.FileName;
+        //        }
+        //        catch
+        //        {
+        //            sresult = "";
+        //        }
+        //    }
+        //    sresult += "\\";
+        //    return sresult;
+        //}
 
         private void SetFolderPath(bool isfirst = false)
         {
             if (!IsInDesignMode)
-                ResourcePath = GetFolderPath(isfirst);
-        }
-
-
-        private static void SaveFiles(string kr, string en, string jp, string chns)
-        {
-            try
             {
-                try
-                {
-                    using (StreamWriter wr = new StreamWriter(ResourcePath + Properties.Settings.Default.KorFileName + ".xaml"))
-                    {
-                        ReplaceCarriageReturns_String(ref kr);
-                        wr.Write(kr);
-                    }
-                }
-                catch
-                {
-                    MessageBox.Show("한글 파일의 저장에 실패하였습니다.");
-                }
-                try
-                {
-                    using (StreamWriter wr = new StreamWriter(ResourcePath + Properties.Settings.Default.EngFileName + ".xaml"))
-                    {
-                        ReplaceCarriageReturns_String(ref en);
-                        wr.Write(en);
-                    }
-                }
-                catch
-                {
-                    MessageBox.Show("영문 파일의 저장에 실패하였습니다.");
-                }
-                try
-                {
-                    using (StreamWriter wr = new StreamWriter(ResourcePath + Properties.Settings.Default.JpnFileName + ".xaml"))
-                    {
-                        ReplaceCarriageReturns_String(ref jp);
-                        wr.Write(jp);
-                    }
-                }
-                catch
-                {
-                    MessageBox.Show("일문 파일의 저장에 실패하였습니다.");
-                }
-                try
-                {
-                    using (StreamWriter wr = new StreamWriter(ResourcePath + Properties.Settings.Default.ChnsFileName + ".xaml"))
-                    {
-                        ReplaceCarriageReturns_String(ref chns);
-                        wr.Write(chns);
-                    }
-                }
-                catch
-                {
-                    MessageBox.Show("중문 파일의 저장에 실패하였습니다.");
-                }
-            }
-            catch
-            {
-                MessageBox.Show("저장 과정 도중 오류가 발생했습니다. 파일이 다른 프로그램에서 열려있지는 않은지 봐주십시오.");
+                ResourcePath = Utils.Common.GetFolderPath(isfirst);
+                //ResourcePath = GetFolderPath(isfirst);
+                lastSelectedPath = ResourcePath;
             }
         }
 
@@ -663,21 +498,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                         MessageBox.Show(x.Key + ".xaml 파일의 저장에 실패하였습니다.");
                     }
                 }
-                //for(int i=0;i<LangList.Count;i++)
-                //{
-                //    try
-                //    {
-                //        using (StreamWriter wr = new StreamWriter(ResourcePath + LangList[i] + ".xaml"))
-                //        {
-                //            strdic[i]= ReplaceCarriageReturns_String(strdic[i]);
-                //            wr.Write(strdic[i]);
-                //        }
-                //    }
-                //    catch
-                //    {
-                //        MessageBox.Show(LangList[i]+".xaml 파일의 저장에 실패하였습니다.");
-                //    }
-                //}
             }
             catch
             {
@@ -702,22 +522,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 App.LoggerEx.Warn(e.Message);
             }
             SaveFiles(param);
-        }
-
-        public static void SaveFiles(XDocument kr, XDocument en, XDocument jp, XDocument ch)
-        {
-            try
-            {
-                ReplaceCarriageReturns_XDoc(ref kr);
-                ReplaceCarriageReturns_XDoc(ref en);
-                ReplaceCarriageReturns_XDoc(ref jp);
-                ReplaceCarriageReturns_XDoc(ref ch);
-            }
-            catch (Exception e)
-            {
-                App.LoggerEx.Warn(e.Message);
-            }
-            SaveFiles(kr.ToString(), en.ToString(), jp.ToString(), ch.ToString());
         }
 
         private void GetAttributesFromID(string ID)
@@ -757,7 +561,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 {
                     ReopenBaseFile(oldpath+"/");
                 }
-                //toreplace = MakeModifyList(DataItems, NewItemsDG);
             }
             else
             {
@@ -1052,17 +855,5 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         #endregion command methods
     }
 
-    public class InverseConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (((bool)value)) return false;
-            else return true;
-        }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

@@ -115,15 +115,17 @@
       <DependentUpon>MyFolderSelectDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Messages\ChangeWindowStateMessage.cs" />
+    <Compile Include="Messages\ReplaceSelectedMessage.cs" />
     <Compile Include="Model\LanguageBoxItem.cs" />
+    <Compile Include="Model\ReplaceModel.cs" />
     <Compile Include="Model\SettingModel.cs" />
     <Compile Include="Utils\Common.cs" />
     <Compile Include="Messages\GotoPageMessage.cs" />
     <Compile Include="Messages\ResetMessage.cs" />
     <Compile Include="Model\AttributeItem.cs" />
-    <Compile Include="Model\DataItem.cs" />
     <Compile Include="Model\ReplaceItem.cs" />
     <Compile Include="Utils\Logger.cs" />
+    <Compile Include="Utils\ValueConverters.cs" />
     <Compile Include="ViewModel\AutoEditExecuteViewModel.cs" />
     <Compile Include="ViewModel\CoreViewModelP1.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -211,9 +213,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="Setting.json">
+    <None Include="Setting.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

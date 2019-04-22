@@ -7,11 +7,20 @@
         mc:Ignorable="d"
         Height="700" Width="500"
         Title="PreviewView"
-        Background="Gray">
+        Background="Gray"
+        Closing="Window_Closing">
     <Grid>
+        <Button Height="20" VerticalAlignment="Top" Margin="20,0,0,0" HorizontalAlignment="Left" Content="전체 선택/해제" Padding="10,0" Click="Button_Click" />
         <Grid Margin="20,20,20,20" ShowGridLines="True">
             <Grid Grid.Column="0" x:Name="orgDataAreaGrid">
-                <TextBox Background="White" x:Name="TB1" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible" IsReadOnly="True" />
+                <DataGrid AutoGenerateColumns="False" x:Name="dg" CanUserAddRows="False" >
+                    <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header="사용" Binding="{Binding Path=IsChecked,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  />
+                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
+                        <DataGridTextColumn Header="원래 값" Binding="{Binding OldValue}" />
+                        <DataGridTextColumn Header="바뀔 값" Binding="{Binding NewValue}" />
+                    </DataGrid.Columns>
+                </DataGrid>
             </Grid>
         </Grid>
     </Grid>

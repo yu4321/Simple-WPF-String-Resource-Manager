@@ -16,6 +16,7 @@ using System.Windows.Data;
 using System.Globalization;
 using SimpleXAMLLocalizationHelper.View;
 using System.Data;
+using SimpleXAMLLocalizationHelper.Messages;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
 {
@@ -28,20 +29,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
     public partial class CoreViewModel : ViewModelBase
     {
         #region properties and variables
-        private ObservableCollection<DataItem> _newItems;
-
-        public ObservableCollection<DataItem> NewItems
-        {
-            get
-            {
-                return _newItems;
-            }
-
-            set
-            {
-                Set(nameof(NewItems), ref _newItems, value);
-            }
-        }
 
         private DataTable _newItemsDG;
 
@@ -58,31 +45,22 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private DataRowView _nowIndexLeft;
-        public DataRowView NowIndexLeft
+
+        private ObservableCollection<ReplaceModel> _selectedToReplace;
+
+        public ObservableCollection<ReplaceModel> SelectedToReplace
         {
             get
             {
-                return _nowIndexLeft;
+                return _selectedToReplace;
             }
             set
             {
-                Set(nameof(NowIndexLeft), ref _nowIndexLeft, value);
+                Set(nameof(SelectedToReplace), ref _selectedToReplace, value);
             }
         }
 
-        private DataRowView _nowIndexRight;
-        public DataRowView NowIndexRight
-        {
-            get
-            {
-                return _nowIndexRight;
-            }
-            set
-            {
-                Set(nameof(NowIndexRight), ref _nowIndexRight, value);
-            }
-        }
+
 
         private bool _isSetComplete;
 
@@ -182,7 +160,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         #endregion
 
         #region methods
-
 
         private void InitializebyFile(string path, DataTable newitems)
         {
@@ -341,7 +318,9 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                                     isoktoadd = false;
                                     foreach (var lang in LangList)
                                     {
-                                        if((string)next[lang] != (string)i[lang])
+                                        var lefts = (string)next[lang];
+                                        var rights = (string)i[lang];
+                                        if (lefts!=rights)
                                         {
                                             isoktoadd = true;
                                         }
@@ -405,7 +384,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         {
             try
             {
-                string folderpath = GetFilePath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
+                string folderpath = Utils.Common.GetFilePath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
                 InitializebyFile(folderpath.Substring(0,folderpath.Length-1), NewItemsDG);
                 IsSetComplete = true;
                 CurrentBase = "현재 비교: 파일";
@@ -423,7 +402,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         {
             try
             {
-                string folderpath = GetFolderPath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
+                string folderpath = Utils.Common.GetFolderPath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
                 InitializebyFolder(folderpath, NewItemsDG);
                 IsSetComplete = true;
                 CurrentBase = "현재 비교: 폴더";
@@ -473,18 +452,37 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
+        private void ReceiveMessage(ReplaceSelectedMessage param)
+        {
+            foreach(var x in param.data)
+            {
+                if (x.IsChecked == false)
+                {
+                    try
+                    {
+                        toreplace.originalTable.AsEnumerable().Where(dr => (string)dr[0] == x.ID).Single().Delete();//.Select($"ID={x.ID}").Single().Delete();
+                        toreplace.replaceTable.AsEnumerable().Where(dr => (string)dr[0] == x.ID).Single().Delete();
+                    }
+                    catch(Exception e)
+                    {
+                        App.Logger.Error(e);
+                    }
+                }
+            }
+        }
+
         private void ExecutePreviewEditCommand()
         {
-            if (toreplace != null)
-            {
-                if (LangMode != toreplace.langmode) toreplace = MakeModifyList(DataItems, NewItemsDG);
-            }
-            new PreviewView(toreplace.ToString()).ShowDialog() ;
+            if (LangMode != toreplace.langmode) toreplace = MakeModifyList(DataItems, NewItemsDG);
+            new PreviewView(new ObservableCollection<ReplaceModel>(toreplace.ToModelList())).ShowDialog();
         }
 
         private void ExecuteBeginAutoEditCommand()
         {
-            toreplace = MakeModifyList(DataItems, NewItemsDG);
+            if (toreplace == null)
+            {
+                toreplace = MakeModifyList(DataItems, NewItemsDG);
+            }
             if (toreplace.replaceTable.Rows.Count <= 0)
             {
                 MessageBox.Show("수정할 사항이 존재하지 않습니다.");
@@ -507,7 +505,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         private void ExecuteResetCommand()
         {
             IsSetComplete = false;
-            NewItems = new ObservableCollection<DataItem>();
             NewItemsDG = new DataTable();
             CurrentBase = "현재 비교 대상 없음";
             toreplace = null;

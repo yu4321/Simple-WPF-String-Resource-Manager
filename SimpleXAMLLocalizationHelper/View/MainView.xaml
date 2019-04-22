@@ -52,14 +52,6 @@
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            <!--<Label Content="한국어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,30,0,0" FontSize="14" />
-            <TextBox HorizontalAlignment="Left" Height="46" Margin="85,36,0,0" TextWrapping="Wrap" Text="{Binding Kor, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
-            <Label Content="영어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,79,0,0" FontSize="14" />
-            <TextBox HorizontalAlignment="Left" Height="46" Margin="85,86,0,0" TextWrapping="Wrap" Text="{Binding Eng, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
-            <Label Content="일어" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,134,0,0" FontSize="14" />
-            <TextBox HorizontalAlignment="Left" Height="46" Margin="85,137,0,0" TextWrapping="Wrap" Text="{Binding Jpn, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />
-            <Label Content="간체" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="28,184,0,0" FontSize="14" />
-            <TextBox HorizontalAlignment="Left" Height="47" Margin="85,190,0,0" TextWrapping="Wrap" Text="{Binding Chns, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="189" AcceptsReturn="True" />-->
             <Button Content="추가" HorizontalAlignment="Left" Margin="8,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding AddCommand}" />
             <Button Content="변경" HorizontalAlignment="Left" Margin="113,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding ModifyCommand}" />
             <Button Content="삭제" HorizontalAlignment="Left" Margin="217,260,0,0" VerticalAlignment="Top" Width="93" Height="88" FontSize="16" Command="{Binding DeleteCommand}" />
