@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -102,13 +103,59 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         {
             if (workList.isfoldermode)
             {
+                for (int i = 0; i < workList.toAddTable.Rows.Count; i++)
+                {
+                    Dictionary<string, XDocument> xDocs = new Dictionary<string, XDocument>();
+                    DataRow rep = workList.toAddTable.Rows[i];
+                    DataRow org = null;
+                    try
+                    {
+                        org = workList.originalTable.AsEnumerable().Where(x => (string)x[0] == (string)rep[0]).Single();
+                        int idx = 0;
+                        foreach (var name in LangList)
+                        {
+                            XDocument xDoc = null;
+                            
+                            AddElementwithDefaultKey(workList.orgpath, name, (string)org["ID"], (string)rep[name], ref xDoc);
+                            xDocs.Add(name, xDoc);
+                            if(org[idx+1] is DBNull)
+                            {
+                                org[idx + 1] = (string)rep[name];
+                            }
+                            idx++;
+                        }
+                        Progress++;
+                        SaveFiles(xDocs);
+                        Progress++;
+
+                        foreach (var x in xDocs)
+                        {
+                            string logtext = string.Format("저장 성공 {0}/{1}.xaml - {2}에 {3} 추가", workList.orgpath, x.Key, (string)org["ID"], (string)rep[x.Key]);
+                            Log += logtext + "\n";
+                            App.Logger.Info(logtext);
+                        }
+                    }
+                    catch (InvalidCastException)
+                    {
+                        Log += string.Format("추가 불가 {0} - 값이 NULL입니다. \n", rep["ID"]);
+                        App.Logger.Info(string.Format("{0}의 {1} - NULL값 미처리", workList.langmode, rep["ID"]));
+                        Progress += 2;
+                    }
+                    catch (Exception e)
+                    {
+                        Log += string.Format("추가 실패 {0} - {1} \n", rep["ID"], e.Message);
+                        App.Logger.Warn(string.Format("추가 실패 {0} {1} - {2} \n", workList.langmode, rep["ID"], e.Message));
+                    }
+                }
+
                 for (int i = 0; i < workList.replaceTable.Rows.Count; i++)
                 {
                     Dictionary<string, XDocument> xDocs = new Dictionary<string, XDocument>();
-                    DataRow org = workList.originalTable.Rows[i];
                     DataRow rep = workList.replaceTable.Rows[i];
+                    DataRow org = null;
                     try
                     {
+                        org=workList.originalTable.AsEnumerable().Where(x => (string)x[0] == (string)rep[0]).Single();
                         foreach (var name in LangList)
                         {
                             XDocument xDoc = null;
@@ -128,14 +175,14 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                     }
                     catch (InvalidCastException)
                     {
-                        Log += string.Format("갱신 불가 {0} - 값이 NULL입니다. \n", org["ID"]);
-                        App.Logger.Info(string.Format("{0}의 {1} - NULL값 미처리", workList.langmode, org["ID"]));
+                        Log += string.Format("갱신 불가 {0} - 값이 NULL입니다. \n", rep["ID"]);
+                        App.Logger.Info(string.Format("{0}의 {1} - NULL값 미처리", workList.langmode, rep["ID"]));
                         Progress += 2;
                     }
                     catch (Exception e)
                     {
-                        Log += string.Format("갱신 실패 {0} - {1} \n", org["ID"], e.Message);
-                        App.Logger.Warn(string.Format("갱신 실패 {0} {1} - {2} \n", workList.langmode, org["ID"], e.Message));
+                        Log += string.Format("갱신 실패 {0} - {1} \n", rep["ID"], e.Message);
+                        App.Logger.Warn(string.Format("갱신 실패 {0} {1} - {2} \n", workList.langmode, rep["ID"], e.Message));
                     }
                 }
             }
@@ -153,7 +200,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                         ReplaceCarriageReturns_XDoc(ref xDoc);
                         SaveFileFullPath(workList.orgpath, workList.langmode, xDoc.ToString());
                         Progress++;
-                        string logtext = string.Format("저장 성공 {0}/{1}.xaml - {2}, {3}으로 변경", workList.orgpath, workList.langmode, (string)org["ID"], (string)rep["NewItem"]);
+                        string logtext = string.Format("저장 성공 {0}/{1}.xaml ID: {2}, {3}으로 변경.", workList.orgpath, workList.langmode, (string)org["ID"], (string)rep["NewItem"]);
                         App.Logger.Info(logtext);
                         Log += logtext + "\n";
                     }
@@ -193,7 +240,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         public void ReadyWork()
         {
             Progress = 0;
-            ProgressMax = workList.replaceTable.Rows.Count * 2;
+            ProgressMax = (workList.replaceTable.Rows.Count+workList.toAddTable.Rows.Count) * 2;
             for (int i = 1; i < workList.originalTable.Columns.Count; i++)
             {
                 DataColumn x = workList.originalTable.Columns[i];

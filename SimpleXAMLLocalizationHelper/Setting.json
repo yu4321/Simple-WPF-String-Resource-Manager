@@ -1,10 +1,12 @@
 ﻿{
-    "LAST_LOGIN": "2019-01-01T00:00:00",
-    "USE_LANGUAGES": [
-        "Korean",
-        "English"
-    ],
-    "FAVORITES": {
-        "Default": "C://Languages"
-    }
+  "LAST_LOGIN": "2019-04-23T17:10:41.2213145+09:00",
+  "USE_LANGUAGES": [
+    "Korean",
+    "English"
+  ],
+  "FAVORITES": {
+    "Default": "C://Languages",
+    "1": "C:\\Users\\pc181008\\Documents\\WonderBoxTicketingTemp\\Casino.Resources\\",
+    "2": "C:\\Users\\pc181008\\Documents\\WonderBoxCarnivalTemp\\Casino.Resources\\"
+  }
 }

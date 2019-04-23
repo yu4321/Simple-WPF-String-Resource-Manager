@@ -4,21 +4,31 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleXAMLLocalizationHelper.View"
+        xmlns:utils="clr-namespace:SimpleXAMLLocalizationHelper.Utils"
         mc:Ignorable="d"
         Height="700" Width="500"
         Title="PreviewView"
         Background="Gray"
         Closing="Window_Closing">
+    <Window.Resources>
+        <utils:InverseConverter x:Key="InvrConv"/>
+    </Window.Resources>
     <Grid>
         <Button Height="20" VerticalAlignment="Top" Margin="20,0,0,0" HorizontalAlignment="Left" Content="전체 선택/해제" Padding="10,0" Click="Button_Click" />
         <Grid Margin="20,20,20,20" ShowGridLines="True">
             <Grid Grid.Column="0" x:Name="orgDataAreaGrid">
                 <DataGrid AutoGenerateColumns="False" x:Name="dg" CanUserAddRows="False">
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Header="사용" Binding="{Binding Path=IsChecked,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
-                        <DataGridTextColumn Header="원래 값" Binding="{Binding OldValue}" />
-                        <DataGridTextColumn Header="바뀔 값" Binding="{Binding NewValue}" />
+                        <DataGridCheckBoxColumn Header="사용" Binding="{Binding Path=IsChecked,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"  >
+                            <DataGridCheckBoxColumn.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="IsEnabled" Value="{Binding IsAdd,Converter={StaticResource InvrConv}}" />
+                                </Style>
+                            </DataGridCheckBoxColumn.CellStyle>
+                        </DataGridCheckBoxColumn>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" MinWidth="100" Width="100" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="원래 값" Binding="{Binding OldValue}" MinWidth="100" Width="100"  IsReadOnly="True"/>
+                        <DataGridTextColumn Header="바뀔 값" Binding="{Binding NewValue}" MinWidth="100" Width="100"  IsReadOnly="True"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

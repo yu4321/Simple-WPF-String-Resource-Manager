@@ -318,17 +318,24 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 if (newitems.Columns[name] == null) newitems.Columns.Add(name);
                 foreach (var x in elements[name])
                 {
-                    var selectresult = newitems.Select(string.Format("ID = '{0}'", x.Attribute(xmn + "Key").Value));
-                    if (selectresult.Count() <= 0)
+                    try
                     {
-                        DataRow dr = newitems.NewRow();
-                        dr["ID"] = x.Attribute(xmn + "Key").Value;
-                        dr[name] = x.Value;
-                        newitems.Rows.Add(dr);
+                        var selectresult = newitems.Select(string.Format("ID = '{0}'", x.Attribute(xmn + "Key").Value));
+                        if (selectresult.Count() <= 0)
+                        {
+                            DataRow dr = newitems.NewRow();
+                            dr["ID"] = x.Attribute(xmn + "Key").Value;
+                            dr[name] = x.Value;
+                            newitems.Rows.Add(dr);
+                        }
+                        else
+                        {
+                            newitems.Rows.Find((string)x.Attribute(xmn + "Key").Value)[name] = x.Value;
+                        }
                     }
-                    else
+                    catch(Exception e)
                     {
-                        newitems.Rows.Find((string)x.Attribute(xmn + "Key").Value)[name] = x.Value;
+                        continue;
                     }
                 }
             }
@@ -339,10 +346,13 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             ReplaceItem result = new ReplaceItem();
             DataTable orgtoreplace = new DataTable();
             DataTable reptoreplace = new DataTable();
+            DataTable reptoadd = new DataTable();
             orgtoreplace.Columns.Add("ID");
             reptoreplace.Columns.Add("ID");
+            reptoadd.Columns.Add("ID");
             orgtoreplace.PrimaryKey = new DataColumn[] { orgtoreplace.Columns["ID"] };
             reptoreplace.PrimaryKey = new DataColumn[] { reptoreplace.Columns["ID"] };
+            reptoadd.PrimaryKey = new DataColumn[] { reptoadd.Columns["ID"] };
             foreach (var name in App.LanguageList)
             {
                 orgtoreplace.Columns.Add(name);
@@ -353,11 +363,13 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 foreach (var name in App.LanguageList)
                 {
                     reptoreplace.Columns.Add(name);
+                    reptoadd.Columns.Add(name);
                 }
             }
             else
             {
                 reptoreplace.Columns.Add("NewItem");
+                reptoadd.Columns.Add("NewItem");
             }
 
             foreach (DataRow i in org.Rows)
@@ -369,6 +381,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                     {
                         DataRow next = x.First();
                         bool isoktoadd = false;
+                        bool willbeadded = false;
                         if (IsFolderMode)
                         {
                             if (org.Columns.Count == rep.Columns.Count)
@@ -378,11 +391,18 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                                     isoktoadd = false;
                                     foreach (var lang in App.LanguageList)
                                     {
-                                        var lefts = (string)next[lang];
-                                        var rights = (string)i[lang];
-                                        if (lefts != rights)
+                                        var lefts = next[lang];////// 둘중 하나가 DBNull일 경우엔 수정 대신 추가가 작동하도록 해야됨
+                                        var rights = i[lang];
+                                        if ((lefts is DBNull || rights is DBNull) && !(lefts is DBNull && rights is DBNull))
                                         {
-                                            isoktoadd = true;
+                                            willbeadded = true;
+                                        }
+                                        else
+                                        {
+                                            if (lefts.ToString() != rights.ToString())
+                                            {
+                                                isoktoadd = true;
+                                            }
                                         }
                                     }
                                 }
@@ -400,10 +420,17 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                             }
                         }
 
-                        if (isoktoadd)
+                        if(isoktoadd || willbeadded)
                         {
-                            reptoreplace.ImportRow(next);
                             orgtoreplace.ImportRow(i);
+                            if (isoktoadd)
+                            {
+                                reptoreplace.ImportRow(next);
+                            }
+                            if (willbeadded)
+                            {
+                                reptoadd.ImportRow(next);
+                            }
                         }
                     }
                 }
@@ -418,6 +445,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             result.orgpath = CurrentFolderPath + "/";
             result.originalTable = orgtoreplace;
             result.replaceTable = reptoreplace;
+            result.toAddTable = reptoadd;
             result.langmode = LangMode;
 
             return result;
@@ -558,7 +586,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             {
                 ReadytoReplaced = MakeModifyList(DataItems, NewDataTableforAlter);
             }
-            if (ReadytoReplaced.replaceTable.Rows.Count <= 0)
+            if ((ReadytoReplaced.replaceTable.Rows.Count+ ReadytoReplaced.toAddTable.Rows.Count) <= 0)
             {
                 MessageBox.Show("수정할 사항이 존재하지 않습니다.");
                 return;

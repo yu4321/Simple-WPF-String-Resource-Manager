@@ -31,9 +31,9 @@ namespace SimpleXAMLLocalizationHelper.View
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            var checkedItems = (dg.ItemsSource as ObservableCollection<ReplacePreviewItem>).Where(x => x.IsChecked).ToList();
-            var uncheckedItems = (dg.ItemsSource as ObservableCollection<ReplacePreviewItem>).Where(x => x.IsChecked == false).ToList();
-            if ((dg.ItemsSource as ObservableCollection<ReplacePreviewItem>).Where(x => x.IsChecked).Count() > 0)
+            var checkedItems = (dg.ItemsSource as ObservableCollection<ReplacePreviewItem>).Where(x => x.IsChecked && !x.IsAdd).ToList();
+            var uncheckedItems = (dg.ItemsSource as ObservableCollection<ReplacePreviewItem>).Where(x => !x.IsChecked && !x.IsAdd).ToList();
+            if ((dg.ItemsSource as ObservableCollection<ReplacePreviewItem>).Where(x => x.IsChecked && !x.IsAdd).Count() > 0)
             {
                 checkedItems.ForEach(x => x.IsChecked = false);
             }

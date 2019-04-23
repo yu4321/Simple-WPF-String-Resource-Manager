@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 
 namespace SimpleXAMLLocalizationHelper.Model
 {
@@ -9,6 +10,7 @@ namespace SimpleXAMLLocalizationHelper.Model
     {
         public DataTable originalTable;
         public DataTable replaceTable;
+        public DataTable toAddTable;
         public bool isfoldermode;
         public string langmode;
         public string orgpath;
@@ -22,6 +24,9 @@ namespace SimpleXAMLLocalizationHelper.Model
             replaceTable = new DataTable();
             replaceTable.Columns.Add("ID");
             replaceTable.PrimaryKey = new DataColumn[] { replaceTable.Columns["ID"] };
+            toAddTable = new DataTable();
+            toAddTable.Columns.Add("ID");
+            toAddTable.PrimaryKey = new DataColumn[] { toAddTable.Columns["ID"] };
             isfoldermode = false;
         }
 
@@ -92,9 +97,27 @@ namespace SimpleXAMLLocalizationHelper.Model
                 {
                     for (int i = 0; i < originalTable.Rows.Count; i++)
                     {
+                        bool isaddmode = false;
                         ReplacePreviewItem item = new ReplacePreviewItem();
                         var curorgitem = originalTable.Rows[i];
-                        var currepitem = replaceTable.Rows[i];
+                        var currepitem = originalTable.Rows[i];
+                        var temp = replaceTable.AsEnumerable().Where(x => (string)x[0] == (string)curorgitem[0]);
+                        if (temp.Count() > 0)
+                        {
+                            currepitem = temp.First();
+                        }
+                        else
+                        {
+                            try
+                            {
+                                currepitem = toAddTable.AsEnumerable().Where(x => (string)x[0] == (string)curorgitem[0]).Single();
+                                isaddmode = true;
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+                        }
                         //result += string.Format("[{0}](", curorgitem[0]);
                         item.ID = (string)curorgitem[0];
                         for (int j = 1; j < originalTable.Columns.Count; j++)
@@ -114,6 +137,10 @@ namespace SimpleXAMLLocalizationHelper.Model
                         }
                         if (item.NewValue.Length > 0)
                         {
+                            if (isaddmode)
+                            {
+                                item.IsAdd = true;
+                            }
                             //result += ")\n\n";
                             result.Add(item);
                         }
@@ -168,6 +195,8 @@ namespace SimpleXAMLLocalizationHelper.Model
                     originalTable.Dispose();
                     replaceTable.Clear();
                     replaceTable.Dispose();
+                    toAddTable.Clear();
+                    toAddTable.Dispose();
                 }
 
                 // TODO: 관리되지 않는 리소스(관리되지 않는 개체)를 해제하고 아래의 종료자를 재정의합니다.

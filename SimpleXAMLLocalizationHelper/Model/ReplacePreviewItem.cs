@@ -18,6 +18,20 @@ namespace SimpleXAMLLocalizationHelper.Model
             }
         }
 
+        private bool _isAdd = false;
+
+        public bool IsAdd
+        {
+            get
+            {
+                return _isAdd;
+            }
+            set
+            {
+                Set(nameof(IsAdd), ref _isAdd, value);
+            }
+        }
+
         private string _id;
 
         public string ID
