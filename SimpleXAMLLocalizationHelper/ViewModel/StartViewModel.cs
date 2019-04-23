@@ -63,9 +63,10 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             {
                 LoadSettings();
             }
-            catch
+            catch(Exception e)
             {
-
+                App.LoggerEx.Error("프로그램 초기화 실패 " + e);
+                Application.Current.Shutdown();
             }
         }
 
@@ -76,9 +77,9 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 LoadSettings();
                 Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Core));
             }
-            catch
+            catch(Exception e)
             {
-
+                MessageBox.Show("설정이 올바르게 로드되지 않았습니다. \n" + e.Message);
             }
         }
 
@@ -101,68 +102,20 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void LoadSettings()
         {
-            newSetting = App.LoadSettings();
+            try
+            {
+                newSetting = App.LoadSettings();
+            }
+            catch
+            {
+                newSetting = App.LoadSettings();
+                App.Logger.Info("기본 설정 재로드 완료.");
+            }
             LastUsed=App.LastUsed;
-            //var settings = new JsonSerializerSettings
-            //{
-            //    NullValueHandling = NullValueHandling.Ignore,
-            //    MissingMemberHandling = MissingMemberHandling.Ignore
-            //};
-
-            //using (FileStream fs=new FileStream("Setting.json", FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            //{
-            //    try
-            //    {
-            //        StreamReader sr = new StreamReader(fs);
-            //        newSetting = JsonConvert.DeserializeObject<SettingModel>(sr.ReadToEnd());
-            //        App.LanguageList = newSetting.USE_LANGUAGES;
-            //        App.Favorites = newSetting.FAVORITES;
-            //    }
-            //    catch(Exception e)
-            //    {
-            //        WriteDefaultSettings();
-            //        MessageBox.Show("설정 파일이 손상되었습니다. 설정을 초기화하였습니다.");
-            //        App.LoggerEx.Warn(e.Message);
-            //        throw;
-            //    }
-            //}
-            //WriteTimeStamptoSetting();
         }
-        
-        //private void WriteTimeStamptoSetting()
-        //{
-        //    using (StreamWriter sw = new StreamWriter("Setting.json"))
-        //    {
-        //        try
-        //        {
-        //            if (newSetting != null)
-        //            {
-        //                newSetting.LAST_LOGIN = DateTime.Now.ToLocalTime();
-        //                LastUsed = newSetting.LAST_LOGIN.ToString();
-        //                string serialized = JsonConvert.SerializeObject(newSetting,Formatting.Indented);
-        //                sw.Write(serialized);
-        //            }
-        //        }
-        //        catch
-        //        {
-
-        //        }
-        //    }
-        //}
 
         private void WriteDefaultSettings()
         {
-            //using (StreamWriter sw = new StreamWriter("Setting.json"))
-            //{
-            //    try
-            //    {
-            //        sw.Write(defaultSetting.ToString());
-            //    }
-            //    catch
-            //    {
-
-            //    }
-            //}
             App.WriteDefaultSettings();
         }
     }

@@ -9,7 +9,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
-using static SimpleXAMLLocalizationHelper.Utils.Common;
+using SimpleXAMLLocalizationHelper.Utils;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Collections.Generic;
 using System.Windows.Data;
@@ -185,6 +185,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             set
             {
                 Set(nameof(DataItems), ref _dataItems, value);
+                Global.CurrentSelectedItems = _dataItems;
             }
         }
 
@@ -203,6 +204,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private string lastSelectedPath;
+        public string ResourcePath { get; set; }
 
         public ICommand AddCommand { get; set; }
         public ICommand ModifyCommand { get; set; }
@@ -221,14 +223,17 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         public ICommand AddFavoriteCommand { get; set; }
 
         public ICommand HomeCommand { get; set; }
-        
+
+        public ICommand OpenAutoEditCommand { get; set; }
+        public ICommand OpenFolderSelectCommand { get; set; }
+
         #endregion properties and variables
 
         #region constructor
 
         public CoreViewModel()
         {
-            MakeLangList();
+            //MakeLangList();
             ItemsA1 = new ObservableCollection<AttributeItem>();
             ItemsA2 = new ObservableCollection<AttributeItem>();
             ItemsA2.Add(new AttributeItem()
@@ -250,43 +255,35 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             OpenFolderSelectCommand = new RelayCommand(() =>
               {
                   SetFolderPath();
-                  Messenger.Default.Send<ResetMessage>(new ResetMessage());
+                  MakeTables(true);
+                  //Messenger.Default.Send<ResetMessage>(new ResetMessage(true));
               });
-            OpenDataGridCommand = new RelayCommand<string>(ExecuteOpenDataGridCommand);
-            OpenBaseFileCommand = new RelayCommand(() => ExecuteOpenBaseFileCommand());
-            OpenBaseFolderCommand = new RelayCommand(() => ExecuteOpenBaseFolderCommand());
-            PreviewEditCommand = new RelayCommand(() => ExecutePreviewEditCommand());
-            BeginAutoEditCommand = new RelayCommand(() => ExecuteBeginAutoEditCommand());
-            ChangeLangCommand = new RelayCommand<string>(ExecuteChangeLangCommand);
-            ResetCommand = new RelayCommand(() => ExecuteResetCommand());
             HomeCommand = new RelayCommand(() => Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Start)));
             AddFavoriteCommand = new RelayCommand(() => ExecuteAddFavoriteCommand());
             Messenger.Default.Register<ResetMessage>(this,(x) => ReceiveMessage(x));
-            Messenger.Default.Register<ReplaceSelectedMessage>(this, (x) => ReceiveMessage(x));
             if (!IsInDesignMode)
             {
                 SetFolderPath(true);
-                MakeTables();
+                MakeTables(true); // 최초 테이블 생성
             }
         }
-
         #endregion constructor
 
         #region methods
 
 
-        private void MakeLangList()
-        {
-            foreach(var x in App.LanguageList)
-            {
-                LangList.Add(x);
-            }
-        }
+        //private void MakeLangList()
+        //{
+        //    foreach(var x in App.LanguageList)
+        //    {
+        //        LangList.Add(x);
+        //    }
+        //}
 
         private void MakeInputBoxes()
         {
             InputBoxes.Clear();
-            foreach(var x in LangList)
+            foreach(var x in App.LanguageList)
             {
                 InputBoxes.Add(new LanguageBoxItem
                 {
@@ -298,7 +295,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void MakeTables(bool isSoftReset=false)
         {
-            List<string> filenames = LangList.ToList();
+            List<string> filenames = App.LanguageList;
             Dictionary<string, XElement[]> elements = new Dictionary<string, XElement[]>();
             Dictionary<string, XDocument> xDocs = new Dictionary<string, XDocument>();
             string lastfind;
@@ -311,7 +308,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                     {
                         XDocument xDoc = XDocument.Load(sr);
                         XElement[] xArray = (from w in xDoc.Descendants()
-                                             where w.Attribute(xmn + "Key") != null && w.HasElements != true
+                                             where w.Attribute(Common.xmn + "Key") != null && w.HasElements != true
                                              select w).ToArray();
                         xDocs.Add(name, xDoc);
                         elements.Add(name, xArray);
@@ -329,7 +326,10 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 return;
             }
 
-            Resets(isSoftReset);
+            if (isSoftReset)
+            {
+                ResetParameters();
+            }
 
             if (DataItems.Columns.Count <= 0)
             {
@@ -341,187 +341,52 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 DataItems.Rows.Clear();
             }
 
-            foreach(var name in filenames)
+            foreach (var name in filenames)
             {
-                if(DataItems.Columns[name]==null) DataItems.Columns.Add(name);
-                foreach(var x in elements[name])
+                if (DataItems.Columns[name] == null) DataItems.Columns.Add(name);
+                foreach (var x in elements[name])
                 {
-                    var selectresult = DataItems.Select(string.Format("ID = '{0}'", x.Attribute(xmn + "Key").Value));
-                    if (selectresult.Count()<=0)
+                    var selectresult = DataItems.Select(string.Format("ID = '{0}'", x.Attribute(Common.xmn + "Key").Value));
+                    if (selectresult.Count() <= 0)
                     {
                         DataRow dr = DataItems.NewRow();
-                        dr["ID"] = x.Attribute(xmn + "Key").Value;
+                        dr["ID"] = x.Attribute(Common.xmn + "Key").Value;
                         dr[name] = x.Value;
                         DataItems.Rows.Add(dr);
                     }
                     else
                     {
-                        DataItems.Rows.Find((string)x.Attribute(xmn + "Key").Value)[name] = x.Value;
+                        DataItems.Rows.Find((string)x.Attribute(Common.xmn + "Key").Value)[name] = x.Value;
                     }
                 }
             }
-            if(InputBoxes.Count<=0)MakeInputBoxes();
+            Global.CurrentSelectedItems = DataItems;
+            if (InputBoxes.Count <= 0)
+            {
+                MakeInputBoxes();
+            }
         }
 
-        private void Resets(bool isSoftReset=false)
+        private void ResetParameters()
         {
-            if (isSoftReset)
-            {
-
-            }
-            else
-            {
-                ItemsA1.Clear();
-                nowindex = null;
-                nowindex_a1 = null;
-                nowindex_a2 = null;
-                SelectedID = null;
-                ID = null;
-                CurrentFolderPath = lastSelectedPath;
-                ExecuteResetCommand();
-                InputBoxes.Clear();
-            }
+            ItemsA1.Clear();
+            nowindex = null;
+            nowindex_a1 = null;
+            nowindex_a2 = null;
+            SelectedID = null;
+            ID = null;
+            CurrentFolderPath = lastSelectedPath;
+            //ExecuteResetCommand();
+            InputBoxes.Clear();
         }
-
-        //private string GetFolderPath(bool isfirst = false)
-        //{
-        //    string sresult;
-        //    using (var dialog = new MyFolderSelectDialog())
-        //    {
-        //        dialog.IsFolderPicker = true;
-        //        dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
-        //        if (isfirst) dialog.Title += "설정에 있는 파일명이 모두 필요합니다.";
-        //        dialog.ShowDialog();
-        //        try
-        //        {
-        //            sresult = dialog.FileName;
-        //            lastSelectedPath = sresult;
-        //        }
-        //        catch
-        //        {
-        //            sresult = "";
-        //        }
-        //    }
-        //    sresult += "\\";
-        //    return sresult;
-        //}
-
-        //private string GetFolderPath(Window basewindow)
-        //{
-        //    string sresult;
-        //    using (var dialog = new MyFolderSelectDialog())
-        //    {
-        //        dialog.IsFolderPicker = true;
-        //        dialog.Title = "언어 리소스 파일들이 들어있는 폴더를 선택해주세요.";
-        //        dialog.ShowDialog(basewindow);
-        //        try
-        //        {
-        //            sresult = dialog.FileName;
-        //        }
-        //        catch
-        //        {
-        //            sresult = "";
-        //        }
-        //    }
-        //    sresult += "\\";
-        //    return sresult;
-        //}
-
-        //private string GetFilePath()
-        //{
-        //    string sresult;
-        //    using (var dialog = new CommonOpenFileDialog())
-        //    {
-        //        dialog.Title = "언어 리소스 파일을 선택해주세요.";
-        //        dialog.Filters.Add(new CommonFileDialogFilter("언어 리소스 파일", ".xaml"));
-        //        CommonFileDialogResult result = dialog.ShowDialog();
-        //        try
-        //        {
-        //            sresult = dialog.FileName;
-        //            //lastSelectedPath = sresult;
-        //        }
-        //        catch
-        //        {
-        //            sresult = "";
-        //        }
-        //    }
-        //    sresult += "\\";
-        //    return sresult;
-        //}
-
-        //private string GetFilePath(Window basewindow)
-        //{
-        //    string sresult;
-        //    using (var dialog = new CommonOpenFileDialog())
-        //    {
-        //        dialog.Title = "언어 리소스 파일을 선택해주세요.";
-        //        dialog.Filters.Add(new CommonFileDialogFilter("언어 리소스 파일", ".xaml"));
-        //        CommonFileDialogResult result = dialog.ShowDialog(basewindow);
-        //        try
-        //        {
-        //            sresult = dialog.FileName;
-        //        }
-        //        catch
-        //        {
-        //            sresult = "";
-        //        }
-        //    }
-        //    sresult += "\\";
-        //    return sresult;
-        //}
 
         private void SetFolderPath(bool isfirst = false)
         {
             if (!IsInDesignMode)
             {
                 ResourcePath = Utils.Common.GetFolderPath(isfirst);
-                //ResourcePath = GetFolderPath(isfirst);
                 lastSelectedPath = ResourcePath;
             }
-        }
-
-        private void SaveFiles(Dictionary<string,string> strdic)
-        {
-            try
-            {
-                foreach(var x in strdic)
-                {
-                    try
-                    {
-                        using(StreamWriter wr = new StreamWriter(ResourcePath + x.Key + ".xaml"))
-                        {
-                            wr.Write(ReplaceCarriageReturns_String(x.Value));
-                        }
-                    }
-                    catch
-                    {
-                        MessageBox.Show(x.Key + ".xaml 파일의 저장에 실패하였습니다.");
-                    }
-                }
-            }
-            catch
-            {
-                MessageBox.Show("저장 과정 도중 오류가 발생했습니다. 파일이 다른 프로그램에서 열려있지는 않은지 봐주십시오.");
-            }
-        }
-
-        public void SaveFiles(Dictionary<string,XDocument> xDocs)
-        {
-            //List<string> param = new List<string>();
-            Dictionary<string, string> param = new Dictionary<string, string>();
-            try
-            {
-                foreach(string x in LangList)
-                {
-                    xDocs[x]= ReplaceCarriageReturns_XDoc(xDocs[x]);
-                    param.Add(x,xDocs[x].ToString());
-                }
-            }
-            catch (Exception e)
-            {
-                App.LoggerEx.Warn(e.Message);
-            }
-            SaveFiles(param);
         }
 
         private void GetAttributesFromID(string ID)
@@ -531,7 +396,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             nowindex_a2 = null;
             try
             {
-                List<XAttribute> allattributes = GetElementAttributesbyID(Properties.Settings.Default.KorFileName, ID);
+                List<XAttribute> allattributes = Common.GetElementAttributesbyID(ResourcePath, Properties.Settings.Default.KorFileName, ID);
                 foreach (var x in allattributes)
                 {
                     ItemsA1.Add(new AttributeItem() {
@@ -547,25 +412,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void ReceiveMessage(ResetMessage action)
         {
-            WorkerViewModel = null;
-
-            if (action.isSoftReset)
-            {
-                string oldpath = CurrentNewPath;
-                MakeTables();
-                if (IsFolderMode)
-                {
-                    ReopenBaseFolder(oldpath);
-                }
-                else
-                {
-                    ReopenBaseFile(oldpath+"/");
-                }
-            }
-            else
-            {
-                MakeTables(action.isSoftReset);
-            }
+            MakeTables(action.isSoftReset); // 내부 수정 후 새로고침
         }
 
         #endregion
@@ -580,24 +427,24 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             string message2 = "";
             if (ID != "" && ID != string.Empty && ID != null)
             { 
-                for(int i = 0; i < LangList.Count; i++)
+                for(int i = 0; i < App.LanguageList.Count; i++)
                 {
                     if(InputBoxes[i].Content!=string.Empty && InputBoxes[i].Content != null)
                     {
                         XDocument xDoc = null;
-                        if (AddElementwithDefaultKey(LangList[i], ID, InputBoxes[i].Content, ref xDoc) == true)
+                        if (Common.AddElementwithDefaultKey(ResourcePath, App.LanguageList[i], ID, InputBoxes[i].Content, ref xDoc) == true)
                         {
-                            message += LangList[i] + ", ";
-                            xDocs.Add(LangList[i],xDoc);
+                            message += App.LanguageList[i] + ", ";
+                            xDocs.Add(App.LanguageList[i],xDoc);
                         }
-                        else MessageBox.Show("같은 ID를 가진 리소스가 " + LangList[i] + ".xaml 파일에 존재합니다.");
+                        else MessageBox.Show("같은 ID를 가진 리소스가 " + App.LanguageList[i] + ".xaml 파일에 존재합니다.");
                     }
                 }
                 if (message.Length > 3)
                 {
                     string finalmessage = message.Substring(0, message.Length - 2) + " 파일에 저장했습니다.";
                     if (message2.Length > 3) finalmessage += "\n\n" + message2.Substring(0, message2.Length - 2) + "파일은 공백값으로 처리했습니다.";
-                    SaveFiles(xDocs);
+                    Common.SaveFiles(ResourcePath, xDocs);
                     MessageBox.Show(finalmessage);
                     Messenger.Default.Send<ResetMessage>(new ResetMessage());
                 }
@@ -618,13 +465,13 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
             try
             {
-                for(int i = 0; i < LangList.Count; i++)
+                for(int i = 0; i < App.LanguageList.Count; i++)
                 {
                     XDocument xDoc = null;
-                    ModifyElementwithIDandValue(LangList[i], ID, InputBoxes[i].Content, ref xDoc);
-                    xDocs.Add(LangList[i],xDoc);
+                    Common.ModifyElementwithIDandValue(ResourcePath, App.LanguageList[i], ID, InputBoxes[i].Content, ref xDoc);
+                    xDocs.Add(App.LanguageList[i],xDoc);
                 }
-                SaveFiles(xDocs);
+                Common.SaveFiles(ResourcePath, xDocs);
                 MessageBox.Show("성공적으로 요소들을 수정하였습니다.");
                 Messenger.Default.Send<ResetMessage>(new ResetMessage());
             }
@@ -656,10 +503,10 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
             try
             {
-                foreach(string lang in LangList)
+                foreach(string lang in App.LanguageList)
                 {
                     XDocument xDoc = null;
-                    if (DeleteElementbyID(lang, nowid, ref xDoc) == false)
+                    if (Common.DeleteElementbyID(ResourcePath, lang, nowid, ref xDoc) == false)
                     {
                         MessageBox.Show(string.Format("{0}.xaml 파일에서 해당 키 값을 찾지 못했습니다.", lang));
                     }
@@ -672,7 +519,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
                 if (successes > 1)
                 {
-                    SaveFiles(xDocs);
+                    Common.SaveFiles(ResourcePath, xDocs);
                     MessageBox.Show("해당 ID(" + nowid + ") 를 성공적으로 삭제하였습니다.");
                     Messenger.Default.Send<ResetMessage>(new ResetMessage());
                 }
@@ -691,11 +538,11 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         private void ExecuteClickCommand()
         {
             ID = (string)nowindex["ID"];
-            for(int i = 0; i < LangList.Count; i++)
+            for(int i = 0; i < App.LanguageList.Count; i++)
             {
                 try
                 {
-                    InputBoxes[i].Content = (string)nowindex[LangList[i]];
+                    InputBoxes[i].Content = (string)nowindex[App.LanguageList[i]];
                 }
                 catch
                 {
@@ -707,9 +554,9 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void ExecuteSearchCommand()
         {
-            for(int i=0;i<LangList.Count;i++)
+            for(int i=0;i< App.LanguageList.Count;i++)
             {
-                InputBoxes[i].Content = GetValuefromID(LangList[i], ID);
+                InputBoxes[i].Content = Common.GetValuefromID(ResourcePath, App.LanguageList[i], ID);
             }
             try
             {
@@ -739,13 +586,13 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             XAttribute target = nowindex_a2.Content;
             try
             {
-                foreach(var name in LangList)
+                foreach(var name in App.LanguageList)
                 {
                     XDocument xDoc = null;
-                    AddAttributefromElementbyID(name, ID, target, ref xDoc);
+                    Common.AddAttributefromElementbyID(ResourcePath, name, ID, target, ref xDoc);
                     xDocs.Add(name, xDoc);
                 }
-                SaveFiles(xDocs);
+                Common.SaveFiles(ResourcePath, xDocs);
                 MessageBox.Show("성공적으로 요소들을 수정하였습니다.");
                 Messenger.Default.Send<ResetMessage>(new ResetMessage());
                 GetAttributesFromID(ID);
@@ -774,13 +621,13 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             XAttribute target = nowindex_a1.Content;
             try
             {
-                foreach (var name in LangList)
+                foreach (var name in App.LanguageList)
                 {
                     XDocument xDoc = null;
-                    DeleteAttributefromElementbyID(name, ID, target, ref xDoc);
+                    Common.DeleteAttributefromElementbyID(ResourcePath, name, ID, target, ref xDoc);
                     xDocs.Add(name, xDoc);
                 }
-                SaveFiles(xDocs);
+                Common.SaveFiles(ResourcePath, xDocs);
                 MessageBox.Show("성공적으로 요소들을 수정하였습니다.");
                 Messenger.Default.Send<ResetMessage>(new ResetMessage());
                 GetAttributesFromID(ID);
@@ -794,8 +641,12 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void ExecuteOpenAutoEditCommand()
         {
-            WorkerViewModel = null;
-            new View.AutoEditView().ShowDialog();
+            Global.CurrentSelectedPath = CurrentFolderPath;
+            Global.CurrentSelectedItems = DataItems;
+            //WorkerViewModel = null;
+            AutoEditView dialog = new AutoEditView();
+            //dialog.DataContext = new AutoEditViewModel();
+            dialog.ShowDialog();
         }
 
         private void ExecuteAddFavoriteCommand()
@@ -824,9 +675,9 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 {
                     _dataItems.Clear();
                     _dataItems.Dispose();
-                    _newItemsDG.Clear();
-                    _newItemsDG.Dispose();
-                    toreplace.Dispose();
+                    //_newItemsDG.Clear();
+                    //_newItemsDG.Dispose();
+                    //toreplace.Dispose();
                 }
 
                 // TODO: 관리되지 않는 리소스(관리되지 않는 개체)를 해제하고 아래의 종료자를 재정의합니다.

@@ -7,9 +7,9 @@
         xmlns:c="clr-namespace:SimpleXAMLLocalizationHelper.ViewModel"
         xmlns:utils="clr-namespace:SimpleXAMLLocalizationHelper.Utils"
         mc:Ignorable="d"
-        DataContext="{Binding Core, Source={StaticResource Locator}}" 
         Height="460" Width="700"
         Title="AutoEditView" 
+        DataContext="{Binding AutoEdit, Source={StaticResource Locator}}" 
         WindowStyle="ToolWindow">
     <Window.Resources>
         <utils:InverseConverter x:Key="InvrConv" />

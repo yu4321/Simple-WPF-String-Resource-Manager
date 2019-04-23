@@ -17,6 +17,7 @@ using System.Globalization;
 using SimpleXAMLLocalizationHelper.View;
 using System.Data;
 using SimpleXAMLLocalizationHelper.Messages;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
 {
@@ -26,11 +27,14 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
     /// See http://www.galasoft.ch/mvvm
     /// </para>
     /// </summary>
-    public partial class CoreViewModel : ViewModelBase
+    public class AutoEditViewModel : ViewModelBase, IDisposable
     {
+        /// <summary>
+        /// Initializes a new instance of the AutoEditViewModel class.
+        /// </summary>
         #region properties and variables
 
-        private DataTable _newItemsDG;
+        private DataTable _newItemsDG = new DataTable();
 
         public DataTable NewItemsDG
         {
@@ -46,7 +50,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
 
-        private ObservableCollection<ReplaceModel> _selectedToReplace;
+        private ObservableCollection<ReplaceModel> _selectedToReplace = new ObservableCollection<ReplaceModel>();
 
         public ObservableCollection<ReplaceModel> SelectedToReplace
         {
@@ -90,7 +94,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private string _currentBase= "현재 비교 대상 없음";
+        private string _currentBase = "현재 비교 대상 없음";
         public string CurrentBase
         {
             get
@@ -118,7 +122,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private string _langMode="Korean";
+        private string _langMode = "Korean";
         public string LangMode
         {
             get
@@ -132,7 +136,34 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private ViewModelBase _workerViewModel;
+        private DataTable _dataItems = null;
+        public DataTable DataItems
+        {
+            get
+            {
+                return _dataItems;
+            }
+            set
+            {
+                Set(nameof(DataItems), ref _dataItems, value);
+            }
+        }
+
+        private string _currentFolderPath = "현재 선택된 폴더 없음";
+        public string CurrentFolderPath
+        {
+            get
+            {
+                return _currentFolderPath;
+            }
+
+            set
+            {
+                Set(nameof(CurrentFolderPath), ref _currentFolderPath, value);
+            }
+        }
+
+        private ViewModelBase _workerViewModel = null;
         public ViewModelBase WorkerViewModel
         {
             get
@@ -145,8 +176,20 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        public ICommand OpenAutoEditCommand { get; set; }
-        public ICommand OpenFolderSelectCommand { get; set; }
+        private ObservableCollection<string> _langList = new ObservableCollection<string>();
+
+        public ObservableCollection<string> LangList
+        {
+            get
+            {
+                return _langList;
+            }
+            set
+            {
+                Set(nameof(LangList), ref _langList, value);
+            }
+        }
+
         public ICommand OpenDataGridCommand { get; set; }
         public ICommand OpenBaseFileCommand { get; set; }
         public ICommand OpenBaseFolderCommand { get; set; }
@@ -161,9 +204,25 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         #region methods
 
+        public AutoEditViewModel()
+        {
+            CurrentFolderPath = Global.CurrentSelectedPath;
+            DataItems = Global.CurrentSelectedItems;
+            LangList = new ObservableCollection<string>(App.LanguageList);
+            OpenDataGridCommand = new RelayCommand<string>(ExecuteOpenDataGridCommand);
+            OpenBaseFileCommand = new RelayCommand(() => ExecuteOpenBaseFileCommand());
+            OpenBaseFolderCommand = new RelayCommand(() => ExecuteOpenBaseFolderCommand());
+            PreviewEditCommand = new RelayCommand(() => ExecutePreviewEditCommand());
+            BeginAutoEditCommand = new RelayCommand(() => ExecuteBeginAutoEditCommand());
+            ChangeLangCommand = new RelayCommand<string>(ExecuteChangeLangCommand);
+            ResetCommand = new RelayCommand(() => ExecuteResetCommand());
+            Messenger.Default.Register<ReplaceSelectedMessage>(this, (x) => ReceiveMessage(x));
+            Messenger.Default.Register<ResetMessage>(this, (x) => ReceiveMessage(x));
+        }
+
         private void InitializebyFile(string path, DataTable newitems)
         {
-            List<string> filenames = LangList.ToList(); ;
+            List<string> filenames = App.LanguageList;
             List<XElement> elements = null;
             XDocument xDoc = null;
             try
@@ -212,7 +271,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void InitializebyFolder(string path, DataTable newitems)
         {
-            List<string> filenames = LangList.ToList(); ;
+            List<string> filenames = App.LanguageList;
             Dictionary<string, XElement[]> elements = new Dictionary<string, XElement[]>();
             Dictionary<string, XDocument> xDocs = new Dictionary<string, XDocument>();
 
@@ -283,14 +342,14 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             reptoreplace.Columns.Add("ID");
             orgtoreplace.PrimaryKey = new DataColumn[] { orgtoreplace.Columns["ID"] };
             reptoreplace.PrimaryKey = new DataColumn[] { reptoreplace.Columns["ID"] };
-            foreach (var name in LangList)
+            foreach (var name in App.LanguageList)
             {
                 orgtoreplace.Columns.Add(name);
             }
 
             if (IsFolderMode)
             {
-                foreach(var name in LangList)
+                foreach (var name in App.LanguageList)
                 {
                     reptoreplace.Columns.Add(name);
                 }
@@ -316,11 +375,11 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                                 try
                                 {
                                     isoktoadd = false;
-                                    foreach (var lang in LangList)
+                                    foreach (var lang in App.LanguageList)
                                     {
                                         var lefts = (string)next[lang];
                                         var rights = (string)i[lang];
-                                        if (lefts!=rights)
+                                        if (lefts != rights)
                                         {
                                             isoktoadd = true;
                                         }
@@ -347,7 +406,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                         }
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     App.LoggerEx.Warn(e.Message);
                     continue;
@@ -385,7 +444,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             try
             {
                 string folderpath = Utils.Common.GetFilePath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
-                InitializebyFile(folderpath.Substring(0,folderpath.Length-1), NewItemsDG);
+                InitializebyFile(folderpath.Substring(0, folderpath.Length - 1), NewItemsDG);
                 IsSetComplete = true;
                 CurrentBase = "현재 비교: 파일";
                 IsFolderMode = false;
@@ -410,7 +469,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 CurrentNewPath = folderpath;
                 toreplace = MakeModifyList(DataItems, NewItemsDG);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 App.LoggerEx.Warn(e.Message);
             }
@@ -454,7 +513,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void ReceiveMessage(ReplaceSelectedMessage param)
         {
-            foreach(var x in param.data)
+            foreach (var x in param.data)
             {
                 if (x.IsChecked == false)
                 {
@@ -463,11 +522,27 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                         toreplace.originalTable.AsEnumerable().Where(dr => (string)dr[0] == x.ID).Single().Delete();//.Select($"ID={x.ID}").Single().Delete();
                         toreplace.replaceTable.AsEnumerable().Where(dr => (string)dr[0] == x.ID).Single().Delete();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         App.Logger.Error(e);
                     }
                 }
+            }
+        }
+
+        private void ReceiveMessage(ResetMessage action)
+        {
+            WorkerViewModel = null;
+            string oldpath = CurrentNewPath;
+            ExecuteResetCommand();
+               
+            if (IsFolderMode)
+            {
+                ReopenBaseFolder(oldpath);
+            }
+            else
+            {
+                ReopenBaseFile(oldpath + "/");
             }
         }
 
@@ -510,6 +585,43 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             toreplace = null;
             CurrentNewPath = "현재 선택된 대상 없음"; ;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // 중복 호출을 검색하려면
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _newItemsDG.Clear();
+                    _newItemsDG.Dispose();
+                    toreplace.Dispose();
+                }
+
+                // TODO: 관리되지 않는 리소스(관리되지 않는 개체)를 해제하고 아래의 종료자를 재정의합니다.
+                // TODO: 큰 필드를 null로 설정합니다.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
+        // ~AutoEditViewModel() {
+        //   // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
+        //   Dispose(false);
+        // }
+
+        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
+        public void Dispose()
+        {
+            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
+            Dispose(true);
+            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
 
         #endregion
     }

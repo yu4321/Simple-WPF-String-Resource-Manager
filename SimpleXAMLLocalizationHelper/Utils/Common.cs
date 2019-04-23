@@ -15,7 +15,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
     {
         public static readonly XNamespace xmn = XNamespace.Get("http://schemas.microsoft.com/winfx/2006/xaml");
         public static readonly XNamespace smn = XNamespace.Get("clr-namespace:System;assembly=mscorlib");
-        public static string ResourcePath = @"C:\Languages\";
+        //public static string ResourcePath = @"C:\Languages\";
 
         #region methods
 
@@ -75,7 +75,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return s;
         }
 
-        public static bool AddElementwithDefaultKey(string location, string newID, string newvalue, ref XDocument xd)
+        public static bool AddElementwithDefaultKey(string ResourcePath, string location, string newID, string newvalue, ref XDocument xd)
         {
             bool result = false;
             XElement addplace;
@@ -118,7 +118,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return result;
         }
 
-        public static bool AddElementwithDefaultKey(string location, string newID, string newvalue, ref XDocument xd, List<XAttribute> attributes=null)
+        public static bool AddElementwithDefaultKey(string ResourcePath, string location, string newID, string newvalue, ref XDocument xd, List<XAttribute> attributes=null)
         {
             bool result = false;
             XElement addplace;
@@ -162,7 +162,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return result;
         }
 
-        public static bool ModifyElementwithIDandValue(string location, string selectedID, string newvalue, ref XDocument xd)
+        public static bool ModifyElementwithIDandValue(string ResourcePath, string location, string selectedID, string newvalue, ref XDocument xd)
         {
             bool result = false;
             using (var sr = new StreamReader(ResourcePath + location + ".xaml"))
@@ -216,7 +216,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return result;
         }
 
-        public static bool DeleteElementbyID(string location, string nowid, ref XDocument xd)
+        public static bool DeleteElementbyID(string ResourcePath, string location, string nowid, ref XDocument xd)
         {
             bool result = false;
             using (var sr = new StreamReader(ResourcePath + location + ".xaml"))
@@ -238,7 +238,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return result;
         }
 
-        public static List<XAttribute> GetElementAttributesbyID(string location, string nowid)
+        public static List<XAttribute> GetElementAttributesbyID(string ResourcePath, string location, string nowid)
         {
             XDocument xd;
             List<XAttribute> result = null;
@@ -260,7 +260,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return result;
         }
 
-        public static bool DeleteAttributefromElementbyID(string location, string selectedID, XAttribute newAttribute, ref XDocument xd)
+        public static bool DeleteAttributefromElementbyID(string ResourcePath, string location, string selectedID, XAttribute newAttribute, ref XDocument xd)
         {
             bool result = false;
             using (var sr = new StreamReader(ResourcePath + location + ".xaml"))
@@ -279,7 +279,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return result;
         }
 
-        public static bool AddAttributefromElementbyID(string location, string selectedID, XAttribute newAttribute, ref XDocument xd)
+        public static bool AddAttributefromElementbyID(string ResourcePath, string location, string selectedID, XAttribute newAttribute, ref XDocument xd)
         {
             bool result = false;
             using (var sr = new StreamReader(ResourcePath + location + ".xaml"))
@@ -297,7 +297,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return result;
         }
 
-        public static string GetValuefromID(string location, string nowid)
+        public static string GetValuefromID(string ResourcePath, string location, string nowid)
         {
             XDocument xd;
             string result = "";
@@ -403,6 +403,50 @@ namespace SimpleXAMLLocalizationHelper.Utils
             }
             sresult += "\\";
             return sresult;
+        }
+
+        private static void SaveFiles(string ResourcePath, Dictionary<string, string> strdic)
+        {
+            try
+            {
+                foreach (var x in strdic)
+                {
+                    try
+                    {
+                        using (StreamWriter wr = new StreamWriter(ResourcePath + x.Key + ".xaml"))
+                        {
+                            wr.Write(ReplaceCarriageReturns_String(x.Value));
+                        }
+                    }
+                    catch
+                    {
+                        MessageBox.Show(x.Key + ".xaml 파일의 저장에 실패하였습니다.");
+                    }
+                }
+            }
+            catch
+            {
+                MessageBox.Show("저장 과정 도중 오류가 발생했습니다. 파일이 다른 프로그램에서 열려있지는 않은지 봐주십시오.");
+            }
+        }
+
+        public static void SaveFiles(string ResourcePath, Dictionary<string, XDocument> xDocs)
+        {
+            //List<string> param = new List<string>();
+            Dictionary<string, string> param = new Dictionary<string, string>();
+            try
+            {
+                foreach (string x in App.LanguageList)
+                {
+                    xDocs[x] = ReplaceCarriageReturns_XDoc(xDocs[x]);
+                    param.Add(x, xDocs[x].ToString());
+                }
+            }
+            catch (Exception e)
+            {
+                App.LoggerEx.Warn(e.Message);
+            }
+            SaveFiles(ResourcePath, param);
         }
 
         #endregion methods

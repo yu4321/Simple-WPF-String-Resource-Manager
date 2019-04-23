@@ -83,7 +83,7 @@
             </Grid>
             <Grid Grid.Row="1">
                 <Button Content="복사▲" HorizontalAlignment="Left" Margin="102,10,0,0" VerticalAlignment="Top" Width="78" Height="23" Command="{Binding AddCommandA1}"/>
-                <Button Content="복사▼" HorizontalAlignment="Left" Margin="232,10,0,0" VerticalAlignment="Top" Width="78" Height="23" Command="{Binding AddCommandA2}" Visibility="Collapsed"/>
+                <!--<Button Content="복사▼" HorizontalAlignment="Left" Margin="232,10,0,0" VerticalAlignment="Top" Width="78" Height="23" Command="{Binding AddCommandA2}" Visibility="Collapsed"/>-->
             </Grid>
             <Grid Grid.Row="2">
                 <DataGrid x:Name="dataGrida2" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="185" Width="210" ItemsSource="{Binding ItemsA2, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" MinColumnWidth="100" AutoGenerateColumns="False" SelectedItem="{Binding nowindex_a2}" CanUserSortColumns="False">
@@ -96,7 +96,6 @@
                 </DataGrid>
                 <Button x:Name="buttona2" Content="삭제" HorizontalAlignment="Left" Margin="10,91,0,0" VerticalAlignment="Top" Width="75" Command="{Binding AddCommandA2}" Visibility="Hidden"/>
             </Grid>
-
         </Grid>
     </Grid>
 </UserControl>

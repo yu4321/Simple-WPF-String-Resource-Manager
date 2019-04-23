@@ -20,7 +20,7 @@ namespace SimpleXAMLLocalizationHelper
         public static Dictionary<string, string> Favorites = new Dictionary<string, string>();
         public static SettingModel lastSetting;
         public static string LastUsed;
-        public const string defaultSetting = "{\"LAST_LOGIN\": \"2019-01-01T00:00:00\",\"USE_LANGUAGES\": [\"Korean\",\"English\"],\"FAVORITES\": {}}";
+        public const string defaultSetting = "{\"LAST_LOGIN\": \"2019-01-01T00:00:00\",\"USE_LANGUAGES\": [\"Korean\",\"English\"],\"FAVORITES\": {\"Default\": \"C://Languages\"}}";
 
         static App()
         {

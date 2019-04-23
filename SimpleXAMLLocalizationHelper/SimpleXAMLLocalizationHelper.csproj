@@ -116,6 +116,7 @@
     </Compile>
     <Compile Include="Messages\ChangeWindowStateMessage.cs" />
     <Compile Include="Messages\ReplaceSelectedMessage.cs" />
+    <Compile Include="Model\Global.cs" />
     <Compile Include="Model\LanguageBoxItem.cs" />
     <Compile Include="Model\ReplaceModel.cs" />
     <Compile Include="Model\SettingModel.cs" />
@@ -127,7 +128,7 @@
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\ValueConverters.cs" />
     <Compile Include="ViewModel\AutoEditExecuteViewModel.cs" />
-    <Compile Include="ViewModel\CoreViewModelP1.cs" />
+    <Compile Include="ViewModel\AutoEditViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\CoreViewModel.cs" />
     <Compile Include="ViewModel\StartViewModel.cs" />

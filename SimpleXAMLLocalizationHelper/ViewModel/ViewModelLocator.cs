@@ -29,6 +29,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<CoreViewModel>();
+            SimpleIoc.Default.Register<AutoEditViewModel>();
             SimpleIoc.Default.Register<StartViewModel>();
         }
 
@@ -58,6 +59,16 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 {
                     return ServiceLocator.Current.GetInstance<CoreViewModel>();
                 }
+            }
+        }
+
+        public AutoEditViewModel AutoEdit
+        {
+            get
+            {
+                var res=ServiceLocator.Current.GetInstance<AutoEditViewModel>();
+                res.ResetCommand.Execute(null);
+                return res;
             }
         }
 

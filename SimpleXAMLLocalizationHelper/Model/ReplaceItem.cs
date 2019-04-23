@@ -149,11 +149,11 @@ namespace SimpleXAMLLocalizationHelper.Model
                     }
                 }
                 if (result.Count > 0) return result;
-                else return null;
+                else return new List<ReplaceModel>();
             }
             else
             {
-                return null;
+                return new List<ReplaceModel>();
             }
         }
 
