@@ -21,6 +21,5 @@ namespace SimpleXAMLLocalizationHelper
         {
             this.Activate();
         }
-
     }
 }

@@ -66,7 +66,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         {
             get
             {
-                var res=ServiceLocator.Current.GetInstance<AutoEditViewModel>();
+                var res = ServiceLocator.Current.GetInstance<AutoEditViewModel>();
                 res.ResetCommand.Execute(null);
                 return res;
             }

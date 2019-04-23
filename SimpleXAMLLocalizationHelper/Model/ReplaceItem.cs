@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleXAMLLocalizationHelper.Model
 {
@@ -41,16 +38,16 @@ namespace SimpleXAMLLocalizationHelper.Model
                         var curorgitem = originalTable.Rows[i];
                         var currepitem = replaceTable.Rows[i];
                         result += string.Format("[{0}](", curorgitem[0]);
-                        for(int j = 1; j < originalTable.Columns.Count; j++)
+                        for (int j = 1; j < originalTable.Columns.Count; j++)
                         {
                             result += curorgitem[j];
-                            if (j < originalTable.Columns.Count-1) result += " , ";
+                            if (j < originalTable.Columns.Count - 1) result += " , ";
                         }
                         result += string.Format(") to [{0}](", currepitem[0]);
                         for (int j = 1; j < replaceTable.Columns.Count; j++)
                         {
                             result += currepitem[j];
-                            if (j < replaceTable.Columns.Count-1) result += " , ";
+                            if (j < replaceTable.Columns.Count - 1) result += " , ";
                         }
                         result += ")\n\n";
                     }
@@ -67,10 +64,10 @@ namespace SimpleXAMLLocalizationHelper.Model
                         if (orgrep.Length > 0 && reprep.Length > 0)
                         {
                             result += string.Format("In [{0}](", curorgitem[0]);
-                            for(int j = 1; j < originalTable.Columns.Count; j++)
+                            for (int j = 1; j < originalTable.Columns.Count; j++)
                             {
                                 result += curorgitem[j];
-                                if (j < originalTable.Columns.Count-1) result += " , ";
+                                if (j < originalTable.Columns.Count - 1) result += " , ";
                             }
                             result += string.Format("), Change {0} to {1}\n\n", orgrep, reprep);
                         }
@@ -85,17 +82,17 @@ namespace SimpleXAMLLocalizationHelper.Model
             }
         }
 
-        public List<ReplaceModel> ToModelList()
+        public List<ReplacePreviewItem> ToModelList()
         {
             if (originalTable.Rows.Count > 0 && replaceTable.Rows.Count > 0)
             {
-                List<ReplaceModel> result = new List<ReplaceModel>();
+                List<ReplacePreviewItem> result = new List<ReplacePreviewItem>();
 
                 if (isfoldermode)
                 {
                     for (int i = 0; i < originalTable.Rows.Count; i++)
                     {
-                        ReplaceModel item = new ReplaceModel();
+                        ReplacePreviewItem item = new ReplacePreviewItem();
                         var curorgitem = originalTable.Rows[i];
                         var currepitem = replaceTable.Rows[i];
                         //result += string.Format("[{0}](", curorgitem[0]);
@@ -105,7 +102,7 @@ namespace SimpleXAMLLocalizationHelper.Model
                             //result += curorgitem[j];
                             //if (j < originalTable.Columns.Count - 1) result += " , ";
                             item.OldValue += curorgitem[j];
-                            if(j < originalTable.Columns.Count - 1) item.OldValue += " , ";
+                            if (j < originalTable.Columns.Count - 1) item.OldValue += " , ";
                         }
                         //result += string.Format(") to [{0}](", currepitem[0]);
                         for (int j = 1; j < replaceTable.Columns.Count; j++)
@@ -133,7 +130,7 @@ namespace SimpleXAMLLocalizationHelper.Model
 
                         if (orgrep.Length > 0 && reprep.Length > 0)
                         {
-                            ReplaceModel item = new ReplaceModel();
+                            ReplacePreviewItem item = new ReplacePreviewItem();
                             //result += string.Format("In [{0}](", curorgitem[0]);
                             item.ID = (string)curorgitem[0];
                             //for (int j = 1; j < originalTable.Columns.Count; j++)
@@ -149,15 +146,16 @@ namespace SimpleXAMLLocalizationHelper.Model
                     }
                 }
                 if (result.Count > 0) return result;
-                else return new List<ReplaceModel>();
+                else return new List<ReplacePreviewItem>();
             }
             else
             {
-                return new List<ReplaceModel>();
+                return new List<ReplacePreviewItem>();
             }
         }
 
         #region IDisposable Support
+
         private bool disposedValue = false; // 중복 호출을 검색하려면
 
         protected virtual void Dispose(bool disposing)
@@ -193,6 +191,7 @@ namespace SimpleXAMLLocalizationHelper.Model
             // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
             // GC.SuppressFinalize(this);
         }
-        #endregion
+
+        #endregion IDisposable Support
     }
 }

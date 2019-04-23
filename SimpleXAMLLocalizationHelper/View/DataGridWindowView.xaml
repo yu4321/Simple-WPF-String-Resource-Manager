@@ -6,10 +6,9 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:SimpleXAMLLocalizationHelper.View"
         mc:Ignorable="d"
-        Title="DataGridWindowView" 
+        Title="DataGridWindowView"
         ResizeMode="NoResize"
-        Height="460" Width="700"
-        >
+        Height="460" Width="700">
     <Grid>
         <DataGrid x:Name="DG" Height="399" Width="661" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" MaxHeight="399" MaxWidth="661" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" MinColumnWidth="100" />
     </Grid>

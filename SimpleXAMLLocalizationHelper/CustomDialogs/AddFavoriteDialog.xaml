@@ -19,7 +19,7 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="이름: " />
-                <TextBox x:Name="keyBox" Grid.Column="1" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="1" Width="120" Height="20" VerticalContentAlignment="Center"  />
+                <TextBox x:Name="keyBox" Grid.Column="1" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="1" Width="120" Height="20" VerticalContentAlignment="Center" />
             </Grid>
             <Grid Grid.Row="1" Margin="10">
                 <Grid.ColumnDefinitions>
@@ -27,9 +27,9 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Label Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="경로: " />
-                <TextBox x:Name="valueBox" Grid.Column="1" IsReadOnly="True" HorizontalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="1" Width="170" Height="20" VerticalContentAlignment="Center"  />
+                <TextBox x:Name="valueBox" Grid.Column="1" IsReadOnly="True" HorizontalContentAlignment="Center" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="1" Width="170" Height="20" VerticalContentAlignment="Center" />
             </Grid>
         </Grid>
-        <Button x:Name="btnConfirm" Content="확인" HorizontalAlignment="Left" Margin="183,118,0,0" VerticalAlignment="Top" Width="75" Click="btnConfirm_Click"/>
+        <Button x:Name="btnConfirm" Content="확인" HorizontalAlignment="Left" Margin="183,118,0,0" VerticalAlignment="Top" Width="75" Click="btnConfirm_Click" />
     </Grid>
 </Window>

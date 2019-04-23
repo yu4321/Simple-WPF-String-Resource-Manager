@@ -8,39 +8,39 @@
         xmlns:utils="clr-namespace:SimpleXAMLLocalizationHelper.Utils"
         mc:Ignorable="d"
         Height="460" Width="700"
-        Title="AutoEditView" 
-        DataContext="{Binding AutoEdit, Source={StaticResource Locator}}" 
+        Title="AutoEditView"
+        DataContext="{Binding AutoEdit, Source={StaticResource Locator}}"
         WindowStyle="ToolWindow">
     <Window.Resources>
         <utils:InverseConverter x:Key="InvrConv" />
     </Window.Resources>
     <Grid>
-        <Grid Margin="20,20,10,20" ShowGridLines="True">
+        <Grid Margin="20,20,10,20">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition Width="0.7*" />
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0" x:Name="orgDataAreaGrid">
-                <TextBox x:Name="TB1" HorizontalContentAlignment="Right" IsReadOnly="True" Text="{Binding CurrentFolderPath,FallbackValue=현재 선택된 폴더 없음}" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="1" Width="164" MaxWidth="164" Height="20" IsReadOnlyCaretVisible="True"  TextChanged="TextChanged" VerticalContentAlignment="Center"  />
+                <TextBox x:Name="TB1" HorizontalContentAlignment="Right" IsReadOnly="True" Text="{Binding CurrentFolderPath,FallbackValue=현재 선택된 폴더 없음}" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="1" Width="164" MaxWidth="164" Height="20" IsReadOnlyCaretVisible="True"  TextChanged="TextChanged" VerticalContentAlignment="Center" />
                 <Button VerticalAlignment="Top" HorizontalAlignment="Right" Content="크게 보기" Margin="0,0,20,0" Command="{Binding OpenDataGridCommand}" CommandParameter="DG1" />
                 <DataGrid Margin="10,25,20,20" ItemsSource="{Binding DataItems, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" CanUserSortColumns="True" CanUserReorderColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding ID}"/>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
             <Grid Grid.Column="1" x:Name="newDataAreaGrid">
                 <TextBox x:Name="TB2" HorizontalContentAlignment="Right" IsReadOnly="True" Text="{Binding CurrentNewPath,FallbackValue=현재 선택된 폴더 없음}" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="1" Width="164" MaxWidth="164" Height="20" VerticalContentAlignment="Center" IsReadOnlyCaretVisible="True" TextChanged="TextChanged" />
                 <Button VerticalAlignment="Top" HorizontalAlignment="Right" Content="크게 보기" Margin="0,0,20,0" Command="{Binding OpenDataGridCommand}" IsEnabled="{Binding IsSetComplete}" CommandParameter="DG2" />
-                <DataGrid Margin="10,25,20,20" ItemsSource="{Binding NewItemsDG, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" CanUserSortColumns="True" CanUserReorderColumns="False" IsReadOnly="True">
+                <DataGrid Margin="10,25,20,20" ItemsSource="{Binding NewDataTableforAlter, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" CanUserSortColumns="True" CanUserReorderColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding ID}"/>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
             <Grid Grid.Column="2" x:Name="controlAreaGrid">
-                <Grid Margin="0,25,0,25" ShowGridLines="True" >
+                <Grid Margin="0,25,0,25">
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
@@ -52,10 +52,10 @@
                     <Grid Grid.Row="0">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
                             <Button HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Padding="1,10,1,10" Content="파일로 열기" Margin="5" IsEnabled="{Binding IsSetComplete, Converter={StaticResource InvrConv}}" Command="{Binding OpenBaseFileCommand}" CommandParameter="File" />
-                            <Button HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Padding="1,10,1,10" Content="폴더로 열기" Margin="5" IsEnabled="{Binding IsSetComplete, Converter={StaticResource InvrConv}}" Command="{Binding OpenBaseFolderCommand}" CommandParameter="Folder"  />
+                            <Button HorizontalAlignment="Center" VerticalAlignment="Center" Width="Auto" Padding="1,10,1,10" Content="폴더로 열기" Margin="5" IsEnabled="{Binding IsSetComplete, Converter={StaticResource InvrConv}}" Command="{Binding OpenBaseFolderCommand}" CommandParameter="Folder" />
                         </StackPanel>
                     </Grid>
-                    <Grid Grid.Row="1">
+                    <Grid Grid.Row="1" Background="#EEEEEE">
                         <Label HorizontalAlignment="Center" VerticalAlignment="Center" Padding="1" Width="Auto" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="{Binding CurrentBase, FallbackValue=현재 비교 파일: 없음}" />
                     </Grid>
                     <Grid Grid.Row="2">
@@ -79,7 +79,7 @@
                 </Grid>
             </Grid>
         </Grid>
-        <!--<Button Content="←선택한 ID만 덮어씌우기←" HorizontalAlignment="Left" Margin="187,395,0,0" VerticalAlignment="Top" Height="21"/>-->
-        <ContentControl Content="{Binding WorkerViewModel}" d:IsHidden="True"/>
+        <!--<Button Content="←선택한 ID만 덮어씌우기←" HorizontalAlignment="Left" Margin="187,395,0,0" VerticalAlignment="Top" Height="21" />-->
+        <ContentControl Content="{Binding WorkerViewModel}" d:IsHidden="True" />
     </Grid>
 </Window>

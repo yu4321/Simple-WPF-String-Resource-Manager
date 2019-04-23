@@ -1,24 +1,20 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using SimpleXAMLLocalizationHelper.CustomDialogs;
+using SimpleXAMLLocalizationHelper.Messages;
 using SimpleXAMLLocalizationHelper.Model;
+using SimpleXAMLLocalizationHelper.Utils;
+using SimpleXAMLLocalizationHelper.View;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
-using SimpleXAMLLocalizationHelper.Utils;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Collections.Generic;
-using System.Windows.Data;
-using System.Globalization;
-using SimpleXAMLLocalizationHelper.View;
-using SimpleXAMLLocalizationHelper.Messages;
-using GalaSoft.MvvmLight.Messaging;
-using System.Data;
-using SimpleXAMLLocalizationHelper.CustomDialogs;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
 {
@@ -28,7 +24,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
     public partial class CoreViewModel : ViewModelBase, IDisposable
     {
         #region properties and variables
-
 
         private ObservableCollection<LanguageBoxItem> _inputBoxes = new ObservableCollection<LanguageBoxItem>();
 
@@ -58,91 +53,75 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private string _selectedID;
+        private DataRowView _currentDataGridRow;
 
-        public string SelectedID
+        public DataRowView CurrentDataGridRow
         {
             get
             {
-                return _selectedID;
+                return _currentDataGridRow;
             }
             set
             {
-                Set(nameof(SelectedID), ref _selectedID, value);
+                Set(nameof(CurrentDataGridRow), ref _currentDataGridRow, value);
             }
         }
 
-        private DataRowView _nowindex;
+        private AttributeItem _currentAttributeUpperSelected;
 
-        public DataRowView nowindex
+        public AttributeItem CurrentAttributeUpperSelected
         {
             get
             {
-                return _nowindex;
+                return _currentAttributeUpperSelected;
             }
             set
             {
-                Set(nameof(nowindex), ref _nowindex, value);
+                Set(nameof(CurrentAttributeUpperSelected), ref _currentAttributeUpperSelected, value);
             }
         }
 
-        private AttributeItem _nowindex_a1;
+        private AttributeItem _currentAttributeUtterSelected;
 
-        public AttributeItem nowindex_a1
+        public AttributeItem CurrentAttributeUtterSelected
         {
             get
             {
-                return _nowindex_a1;
+                return _currentAttributeUtterSelected;
             }
             set
             {
-                Set(nameof(nowindex_a1), ref _nowindex_a1, value);
+                Set(nameof(CurrentAttributeUtterSelected), ref _currentAttributeUtterSelected, value);
             }
         }
 
-        private AttributeItem _nowindex_a2;
+        private ObservableCollection<AttributeItem> _attributeCollectionUpper;
 
-        public AttributeItem nowindex_a2
+        public ObservableCollection<AttributeItem> AttributeCollectionUpper
         {
             get
             {
-                return _nowindex_a2;
+                return _attributeCollectionUpper;
             }
+
             set
             {
-                Set(nameof(nowindex_a2), ref _nowindex_a2, value);
+                Set(nameof(AttributeCollectionUpper), ref _attributeCollectionUpper, value);
             }
         }
 
-        private ObservableCollection<AttributeItem> _ItemsA1;
+        private ObservableCollection<AttributeItem> _attributeCollectionUtter;
 
-        public ObservableCollection<AttributeItem> ItemsA1
-
+        public ObservableCollection<AttributeItem> AttributeCollectionUtter
         {
             get
             {
-                return _ItemsA1;
+                return _attributeCollectionUtter;
             }
 
             set
             {
-                Set(nameof(ItemsA1), ref _ItemsA1, value);
-            }
-        }
-
-        private ObservableCollection<AttributeItem> _ItemsA2;
-
-        public ObservableCollection<AttributeItem> ItemsA2
-
-        {
-            get
-            {
-                return _ItemsA2;
-            }
-
-            set
-            {
-                Set(nameof(ItemsA2), ref _ItemsA2, value);
+                Set(nameof(AttributeCollectionUtter), ref _attributeCollectionUtter, value);
             }
         }
 
@@ -161,7 +140,8 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private string _currentFolderPath= "현재 선택된 폴더 없음";
+        private string _currentFolderPath = "현재 선택된 폴더 없음";
+
         public string CurrentFolderPath
         {
             get
@@ -175,31 +155,18 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private DataTable _dataItems=new DataTable();
-        public DataTable DataItems
+        private DataTable _mainDataTable = new DataTable();
+
+        public DataTable MainDataTable
         {
             get
             {
-                return _dataItems;
+                return _mainDataTable;
             }
             set
             {
-                Set(nameof(DataItems), ref _dataItems, value);
-                Global.CurrentSelectedItems = _dataItems;
-            }
-        }
-
-        private ObservableCollection<string> _langList = new ObservableCollection<string>();
-
-        public ObservableCollection<string> LangList
-        {
-            get
-            {
-                return _langList;
-            }
-            set
-            {
-                Set(nameof(LangList), ref _langList, value);
+                Set(nameof(MainDataTable), ref _mainDataTable, value);
+                Global.CurrentSelectedItems = _mainDataTable;
             }
         }
 
@@ -213,12 +180,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         public ICommand DeleteCommand { get; set; }
 
         public ICommand AddCommandA1 { get; set; }
-        public ICommand ModifyCommandA1 { get; set; }
         public ICommand DeleteCommandA1 { get; set; }
-
-        public ICommand AddCommandA2 { get; set; }
-        public ICommand ModifyCommandA2 { get; set; }
-        public ICommand DeleteCommandA2 { get; set; }
 
         public ICommand AddFavoriteCommand { get; set; }
 
@@ -233,14 +195,13 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         public CoreViewModel()
         {
-            //MakeLangList();
-            ItemsA1 = new ObservableCollection<AttributeItem>();
-            ItemsA2 = new ObservableCollection<AttributeItem>();
-            ItemsA2.Add(new AttributeItem()
+            AttributeCollectionUpper = new ObservableCollection<AttributeItem>();
+            AttributeCollectionUtter = new ObservableCollection<AttributeItem>();
+            AttributeCollectionUtter.Add(new AttributeItem()
             {
                 Content = new XAttribute(XNamespace.Xml + "space", "preserve")
             });
-            ItemsA2.Add(new AttributeItem()
+            AttributeCollectionUtter.Add(new AttributeItem()
             {
                 Content = new XAttribute(XNamespace.Xml + "space", "default")
             });
@@ -251,7 +212,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             DeleteCommand = new RelayCommand(() => ExecuteDeleteCommand());
             AddCommandA1 = new RelayCommand(() => ExecuteAddCommandA1());
             DeleteCommandA1 = new RelayCommand(() => ExecuteDeleteCommandA1());
-            OpenAutoEditCommand = new RelayCommand(() =>ExecuteOpenAutoEditCommand());
+            OpenAutoEditCommand = new RelayCommand(() => ExecuteOpenAutoEditCommand());
             OpenFolderSelectCommand = new RelayCommand(() =>
               {
                   SetFolderPath();
@@ -260,30 +221,22 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
               });
             HomeCommand = new RelayCommand(() => Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Start)));
             AddFavoriteCommand = new RelayCommand(() => ExecuteAddFavoriteCommand());
-            Messenger.Default.Register<ResetMessage>(this,(x) => ReceiveMessage(x));
+            Messenger.Default.Register<ResetMessage>(this, (x) => MakeTables(x.isSoftReset));
             if (!IsInDesignMode)
             {
                 SetFolderPath(true);
                 MakeTables(true); // 최초 테이블 생성
             }
         }
+
         #endregion constructor
 
         #region methods
 
-
-        //private void MakeLangList()
-        //{
-        //    foreach(var x in App.LanguageList)
-        //    {
-        //        LangList.Add(x);
-        //    }
-        //}
-
         private void MakeInputBoxes()
         {
             InputBoxes.Clear();
-            foreach(var x in App.LanguageList)
+            foreach (var x in App.LanguageList)
             {
                 InputBoxes.Add(new LanguageBoxItem
                 {
@@ -293,7 +246,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
-        private void MakeTables(bool isSoftReset=false)
+        private void MakeTables(bool isSoftReset = false)
         {
             List<string> filenames = App.LanguageList;
             Dictionary<string, XElement[]> elements = new Dictionary<string, XElement[]>();
@@ -331,36 +284,36 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 ResetParameters();
             }
 
-            if (DataItems.Columns.Count <= 0)
+            if (MainDataTable.Columns.Count <= 0)
             {
-                DataItems.Columns.Add("ID");
-                DataItems.PrimaryKey = new DataColumn[] { DataItems.Columns["ID"] };
+                MainDataTable.Columns.Add("ID");
+                MainDataTable.PrimaryKey = new DataColumn[] { MainDataTable.Columns["ID"] };
             }
             else
             {
-                DataItems.Rows.Clear();
+                MainDataTable.Rows.Clear();
             }
 
             foreach (var name in filenames)
             {
-                if (DataItems.Columns[name] == null) DataItems.Columns.Add(name);
+                if (MainDataTable.Columns[name] == null) MainDataTable.Columns.Add(name);
                 foreach (var x in elements[name])
                 {
-                    var selectresult = DataItems.Select(string.Format("ID = '{0}'", x.Attribute(Common.xmn + "Key").Value));
+                    var selectresult = MainDataTable.Select(string.Format("ID = '{0}'", x.Attribute(Common.xmn + "Key").Value));
                     if (selectresult.Count() <= 0)
                     {
-                        DataRow dr = DataItems.NewRow();
+                        DataRow dr = MainDataTable.NewRow();
                         dr["ID"] = x.Attribute(Common.xmn + "Key").Value;
                         dr[name] = x.Value;
-                        DataItems.Rows.Add(dr);
+                        MainDataTable.Rows.Add(dr);
                     }
                     else
                     {
-                        DataItems.Rows.Find((string)x.Attribute(Common.xmn + "Key").Value)[name] = x.Value;
+                        MainDataTable.Rows.Find((string)x.Attribute(Common.xmn + "Key").Value)[name] = x.Value;
                     }
                 }
             }
-            Global.CurrentSelectedItems = DataItems;
+            Global.CurrentSelectedItems = MainDataTable;
             if (InputBoxes.Count <= 0)
             {
                 MakeInputBoxes();
@@ -369,14 +322,12 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void ResetParameters()
         {
-            ItemsA1.Clear();
-            nowindex = null;
-            nowindex_a1 = null;
-            nowindex_a2 = null;
-            SelectedID = null;
+            AttributeCollectionUpper.Clear();
+            CurrentDataGridRow = null;
+            CurrentAttributeUpperSelected = null;
+            CurrentAttributeUtterSelected = null;
             ID = null;
             CurrentFolderPath = lastSelectedPath;
-            //ExecuteResetCommand();
             InputBoxes.Clear();
         }
 
@@ -391,31 +342,26 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void GetAttributesFromID(string ID)
         {
-            ItemsA1.Clear();
-            nowindex_a1 = null;
-            nowindex_a2 = null;
+            AttributeCollectionUpper.Clear();
+            CurrentAttributeUpperSelected = null;
+            CurrentAttributeUtterSelected = null;
             try
             {
                 List<XAttribute> allattributes = Common.GetElementAttributesbyID(ResourcePath, Properties.Settings.Default.KorFileName, ID);
                 foreach (var x in allattributes)
                 {
-                    ItemsA1.Add(new AttributeItem() {
+                    AttributeCollectionUpper.Add(new AttributeItem()
+                    {
                         Content = x
                     });
                 }
             }
             catch
             {
-
             }
         }
 
-        private void ReceiveMessage(ResetMessage action)
-        {
-            MakeTables(action.isSoftReset); // 내부 수정 후 새로고침
-        }
-
-        #endregion
+        #endregion methods
 
         #region command methods
 
@@ -426,16 +372,16 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             string message = "";
             string message2 = "";
             if (ID != "" && ID != string.Empty && ID != null)
-            { 
-                for(int i = 0; i < App.LanguageList.Count; i++)
+            {
+                for (int i = 0; i < App.LanguageList.Count; i++)
                 {
-                    if(InputBoxes[i].Content!=string.Empty && InputBoxes[i].Content != null)
+                    if (InputBoxes[i].Content != string.Empty && InputBoxes[i].Content != null)
                     {
                         XDocument xDoc = null;
                         if (Common.AddElementwithDefaultKey(ResourcePath, App.LanguageList[i], ID, InputBoxes[i].Content, ref xDoc) == true)
                         {
                             message += App.LanguageList[i] + ", ";
-                            xDocs.Add(App.LanguageList[i],xDoc);
+                            xDocs.Add(App.LanguageList[i], xDoc);
                         }
                         else MessageBox.Show("같은 ID를 가진 리소스가 " + App.LanguageList[i] + ".xaml 파일에 존재합니다.");
                     }
@@ -465,11 +411,11 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
             try
             {
-                for(int i = 0; i < App.LanguageList.Count; i++)
+                for (int i = 0; i < App.LanguageList.Count; i++)
                 {
                     XDocument xDoc = null;
                     Common.ModifyElementwithIDandValue(ResourcePath, App.LanguageList[i], ID, InputBoxes[i].Content, ref xDoc);
-                    xDocs.Add(App.LanguageList[i],xDoc);
+                    xDocs.Add(App.LanguageList[i], xDoc);
                 }
                 Common.SaveFiles(ResourcePath, xDocs);
                 MessageBox.Show("성공적으로 요소들을 수정하였습니다.");
@@ -488,11 +434,11 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             int successes = 0;
             string nowid = "";
 
-            if (nowindex != null)
+            if (CurrentDataGridRow != null)
             {
-                nowid = (string)nowindex["ID"];
+                nowid = (string)CurrentDataGridRow["ID"];
             }
-            else if (ID != null && ID!=string.Empty && ID!="" && ID.Length!=0)
+            else if (ID != null && ID != string.Empty && ID != "" && ID.Length != 0)
             {
                 nowid = ID;
             }
@@ -503,7 +449,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
             try
             {
-                foreach(string lang in App.LanguageList)
+                foreach (string lang in App.LanguageList)
                 {
                     XDocument xDoc = null;
                     if (Common.DeleteElementbyID(ResourcePath, lang, nowid, ref xDoc) == false)
@@ -532,61 +478,60 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             {
                 MessageBox.Show("ID 검색 과정에서 오류가 발생했습니다. xaml 파일들을 다시 한번 점검해주십시오.");
             }
-           
         }
 
         private void ExecuteClickCommand()
         {
-            ID = (string)nowindex["ID"];
-            for(int i = 0; i < App.LanguageList.Count; i++)
+            ID = (string)CurrentDataGridRow["ID"];
+            for (int i = 0; i < App.LanguageList.Count; i++)
             {
                 try
                 {
-                    InputBoxes[i].Content = (string)nowindex[App.LanguageList[i]];
+                    InputBoxes[i].Content = (string)CurrentDataGridRow[App.LanguageList[i]];
                 }
                 catch
                 {
                     InputBoxes[i].Content = "NULL";
                 }
             }
-            if (IsAttrsUsing) GetAttributesFromID((string)nowindex["ID"]);
+            if (IsAttrsUsing) GetAttributesFromID((string)CurrentDataGridRow["ID"]);
         }
 
         private void ExecuteSearchCommand()
         {
-            for(int i=0;i< App.LanguageList.Count;i++)
+            for (int i = 0; i < App.LanguageList.Count; i++)
             {
                 InputBoxes[i].Content = Common.GetValuefromID(ResourcePath, App.LanguageList[i], ID);
             }
             try
             {
-                nowindex = DataItems.DefaultView.FindRows(ID).Single();
+                CurrentDataGridRow = MainDataTable.DefaultView.FindRows(ID).Single();
             }
             catch
             {
-                nowindex = null;
+                CurrentDataGridRow = null;
             }
         }
 
         private void ExecuteAddCommandA1()
         {
-            if (nowindex_a2 == null)
+            if (CurrentAttributeUtterSelected == null)
             {
                 MessageBox.Show("삽입할 어트리뷰트를 선택해주세요!");
                 return;
             }
 
-            if ((from w in ItemsA1 where w.Content.Name==nowindex_a2.Content.Name select w).Count()>0)
+            if ((from w in AttributeCollectionUpper where w.Content.Name == CurrentAttributeUtterSelected.Content.Name select w).Count() > 0)
             {
                 MessageBox.Show("동일한 어트리뷰트의 중복 삽입은 불가능합니다!");
                 return;
             }
 
             Dictionary<string, XDocument> xDocs = new Dictionary<string, XDocument>();
-            XAttribute target = nowindex_a2.Content;
+            XAttribute target = CurrentAttributeUtterSelected.Content;
             try
             {
-                foreach(var name in App.LanguageList)
+                foreach (var name in App.LanguageList)
                 {
                     XDocument xDoc = null;
                     Common.AddAttributefromElementbyID(ResourcePath, name, ID, target, ref xDoc);
@@ -605,20 +550,20 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void ExecuteDeleteCommandA1()
         {
-            if (nowindex_a1 == null)
+            if (CurrentAttributeUpperSelected == null)
             {
                 MessageBox.Show("삭제할 어트리뷰트를 선택해주세요!");
                 return;
             }
 
-            if (nowindex_a1.Content.Name.LocalName.Contains("Key"))
+            if (CurrentAttributeUpperSelected.Content.Name.LocalName.Contains("Key"))
             {
                 MessageBox.Show("키 값의 삭제는 불가능합니다!");
                 return;
             }
-            
+
             Dictionary<string, XDocument> xDocs = new Dictionary<string, XDocument>();
-            XAttribute target = nowindex_a1.Content;
+            XAttribute target = CurrentAttributeUpperSelected.Content;
             try
             {
                 foreach (var name in App.LanguageList)
@@ -636,13 +581,12 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             {
                 MessageBox.Show("ID 검색 과정에서 오류가 발생했습니다. xaml 파일들을 다시 한번 점검해주십시오.");
             }
-            
         }
 
         private void ExecuteOpenAutoEditCommand()
         {
             Global.CurrentSelectedPath = CurrentFolderPath;
-            Global.CurrentSelectedItems = DataItems;
+            Global.CurrentSelectedItems = MainDataTable;
             //WorkerViewModel = null;
             AutoEditView dialog = new AutoEditView();
             //dialog.DataContext = new AutoEditViewModel();
@@ -664,7 +608,10 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
+        #endregion command methods
+
         #region IDisposable Support
+
         private bool disposedValue = false; // 중복 호출을 검색하려면
 
         protected virtual void Dispose(bool disposing)
@@ -673,38 +620,19 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             {
                 if (disposing)
                 {
-                    _dataItems.Clear();
-                    _dataItems.Dispose();
-                    //_newItemsDG.Clear();
-                    //_newItemsDG.Dispose();
-                    //toreplace.Dispose();
+                    _mainDataTable.Clear();
+                    _mainDataTable.Dispose();
                 }
-
-                // TODO: 관리되지 않는 리소스(관리되지 않는 개체)를 해제하고 아래의 종료자를 재정의합니다.
-                // TODO: 큰 필드를 null로 설정합니다.
 
                 disposedValue = true;
             }
         }
 
-        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
-        // ~CoreViewModel() {
-        //   // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
-        //   Dispose(false);
-        // }
-
-        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
         public void Dispose()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(true);
-            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
-            // GC.SuppressFinalize(this);
         }
-        #endregion
 
-        #endregion command methods
+        #endregion IDisposable Support
     }
-
-
 }

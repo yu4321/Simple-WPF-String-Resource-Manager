@@ -1,15 +1,11 @@
 ﻿using GalaSoft.MvvmLight;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SimpleXAMLLocalizationHelper.Model
 {
-    public class ReplaceModel :ObservableObject
+    public class ReplacePreviewItem : ObservableObject
     {
         private bool _isChecked = true;
+
         public bool IsChecked
         {
             get
@@ -23,6 +19,7 @@ namespace SimpleXAMLLocalizationHelper.Model
         }
 
         private string _id;
+
         public string ID
         {
             get
@@ -35,8 +32,8 @@ namespace SimpleXAMLLocalizationHelper.Model
             }
         }
 
-
         private string _oldValue;
+
         public string OldValue
         {
             get
@@ -50,6 +47,7 @@ namespace SimpleXAMLLocalizationHelper.Model
         }
 
         private string _newValue;
+
         public string NewValue
         {
             get
@@ -66,6 +64,5 @@ namespace SimpleXAMLLocalizationHelper.Model
         {
             return string.Format("{0}- {1}", IsChecked ? "v" : "x", ID);
         }
-
     }
 }

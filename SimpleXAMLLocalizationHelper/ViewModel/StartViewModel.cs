@@ -1,11 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
-using Newtonsoft.Json;
 using SimpleXAMLLocalizationHelper.Messages;
 using SimpleXAMLLocalizationHelper.Model;
 using System;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
@@ -20,6 +18,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
     public class StartViewModel : ViewModelBase
     {
         private string _verText;
+
         public string VerText
         {
             get
@@ -33,6 +32,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private string _lastUsed;
+
         public string LastUsed
         {
             get
@@ -63,7 +63,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             {
                 LoadSettings();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 App.LoggerEx.Error("프로그램 초기화 실패 " + e);
                 Application.Current.Shutdown();
@@ -77,7 +77,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 LoadSettings();
                 Messenger.Default.Send<GotoPageMessage>(new GotoPageMessage(PageName.Core));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show("설정이 올바르게 로드되지 않았습니다. \n" + e.Message);
             }
@@ -111,7 +111,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 newSetting = App.LoadSettings();
                 App.Logger.Info("기본 설정 재로드 완료.");
             }
-            LastUsed=App.LastUsed;
+            LastUsed = App.LastUsed;
         }
 
         private void WriteDefaultSettings()

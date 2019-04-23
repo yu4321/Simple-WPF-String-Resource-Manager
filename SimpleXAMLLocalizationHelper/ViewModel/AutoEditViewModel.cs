@@ -1,23 +1,19 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
+using SimpleXAMLLocalizationHelper.Messages;
 using SimpleXAMLLocalizationHelper.Model;
+using SimpleXAMLLocalizationHelper.View;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using static SimpleXAMLLocalizationHelper.Utils.Common;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Collections.Generic;
-using System.Windows.Data;
-using System.Globalization;
-using SimpleXAMLLocalizationHelper.View;
-using System.Data;
-using SimpleXAMLLocalizationHelper.Messages;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace SimpleXAMLLocalizationHelper.ViewModel
 {
@@ -32,27 +28,27 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         /// <summary>
         /// Initializes a new instance of the AutoEditViewModel class.
         /// </summary>
+
         #region properties and variables
 
-        private DataTable _newItemsDG = new DataTable();
+        private DataTable _newDataTableforAlter = new DataTable();
 
-        public DataTable NewItemsDG
+        public DataTable NewDataTableforAlter
         {
             get
             {
-                return _newItemsDG;
+                return _newDataTableforAlter;
             }
 
             set
             {
-                Set(nameof(NewItemsDG), ref _newItemsDG, value);
+                Set(nameof(NewDataTableforAlter), ref _newDataTableforAlter, value);
             }
         }
 
+        private ObservableCollection<ReplacePreviewItem> _selectedToReplace = new ObservableCollection<ReplacePreviewItem>();
 
-        private ObservableCollection<ReplaceModel> _selectedToReplace = new ObservableCollection<ReplaceModel>();
-
-        public ObservableCollection<ReplaceModel> SelectedToReplace
+        public ObservableCollection<ReplacePreviewItem> SelectedToReplace
         {
             get
             {
@@ -63,8 +59,6 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 Set(nameof(SelectedToReplace), ref _selectedToReplace, value);
             }
         }
-
-
 
         private bool _isSetComplete;
 
@@ -82,6 +76,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private bool _isfoldermode;
+
         public bool IsFolderMode
         {
             get
@@ -95,6 +90,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private string _currentBase = "현재 비교 대상 없음";
+
         public string CurrentBase
         {
             get
@@ -109,6 +105,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private string _currentNewPath = "현재 선택된 대상 없음";
+
         public string CurrentNewPath
         {
             get
@@ -123,6 +120,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private string _langMode = "Korean";
+
         public string LangMode
         {
             get
@@ -137,6 +135,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private DataTable _dataItems = null;
+
         public DataTable DataItems
         {
             get
@@ -150,6 +149,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private string _currentFolderPath = "현재 선택된 폴더 없음";
+
         public string CurrentFolderPath
         {
             get
@@ -164,6 +164,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         }
 
         private ViewModelBase _workerViewModel = null;
+
         public ViewModelBase WorkerViewModel
         {
             get
@@ -198,9 +199,9 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         public ICommand BeginAutoEditCommand { get; set; }
         public ICommand ResetCommand { get; set; }
 
-        private ReplaceItem toreplace;
+        private ReplaceItem ReadytoReplaced { get; set; }
 
-        #endregion
+        #endregion properties and variables
 
         #region methods
 
@@ -422,70 +423,17 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             return result;
         }
 
-
-        #endregion
-
-        #region command methods
-
-        private void ExecuteOpenDataGridCommand(string param)
-        {
-            if (param == "DG1")
-            {
-                new DataGridWindowView(DataItems).ShowDialog();
-            }
-            else
-            {
-                new DataGridWindowView(NewItemsDG).ShowDialog();
-            }
-        }
-
-        private void ExecuteOpenBaseFileCommand()
-        {
-            try
-            {
-                string folderpath = Utils.Common.GetFilePath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
-                InitializebyFile(folderpath.Substring(0, folderpath.Length - 1), NewItemsDG);
-                IsSetComplete = true;
-                CurrentBase = "현재 비교: 파일";
-                IsFolderMode = false;
-                CurrentNewPath = folderpath.Substring(0, folderpath.Length - 1);
-                toreplace = MakeModifyList(DataItems, NewItemsDG);
-            }
-            catch (Exception e)
-            {
-                App.LoggerEx.Warn(e.Message);
-            }
-        }
-
-        private void ExecuteOpenBaseFolderCommand()
-        {
-            try
-            {
-                string folderpath = Utils.Common.GetFolderPath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
-                InitializebyFolder(folderpath, NewItemsDG);
-                IsSetComplete = true;
-                CurrentBase = "현재 비교: 폴더";
-                IsFolderMode = true;
-                CurrentNewPath = folderpath;
-                toreplace = MakeModifyList(DataItems, NewItemsDG);
-            }
-            catch (Exception e)
-            {
-                App.LoggerEx.Warn(e.Message);
-            }
-        }
-
         private void ReopenBaseFile(string oldpath)
         {
             try
             {
                 string folderpath = oldpath;
-                InitializebyFile(folderpath.Substring(0, folderpath.Length - 1), NewItemsDG);
+                InitializebyFile(folderpath.Substring(0, folderpath.Length - 1), NewDataTableforAlter);
                 IsSetComplete = true;
                 CurrentBase = "현재 비교: 파일";
                 IsFolderMode = false;
                 CurrentNewPath = folderpath.Substring(0, folderpath.Length - 1);
-                toreplace = MakeModifyList(DataItems, NewItemsDG);
+                ReadytoReplaced = MakeModifyList(DataItems, NewDataTableforAlter);
             }
             catch (Exception e)
             {
@@ -498,12 +446,12 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             try
             {
                 string folderpath = oldpath;
-                InitializebyFolder(folderpath, NewItemsDG);
+                InitializebyFolder(folderpath, NewDataTableforAlter);
                 IsSetComplete = true;
                 CurrentBase = "현재 비교: 폴더";
                 IsFolderMode = true;
                 CurrentNewPath = folderpath;
-                toreplace = MakeModifyList(DataItems, NewItemsDG);
+                ReadytoReplaced = MakeModifyList(DataItems, NewDataTableforAlter);
             }
             catch (Exception e)
             {
@@ -519,8 +467,8 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 {
                     try
                     {
-                        toreplace.originalTable.AsEnumerable().Where(dr => (string)dr[0] == x.ID).Single().Delete();//.Select($"ID={x.ID}").Single().Delete();
-                        toreplace.replaceTable.AsEnumerable().Where(dr => (string)dr[0] == x.ID).Single().Delete();
+                        ReadytoReplaced.originalTable.AsEnumerable().Where(dr => (string)dr[0] == x.ID).Single().Delete();//.Select($"ID={x.ID}").Single().Delete();
+                        ReadytoReplaced.replaceTable.AsEnumerable().Where(dr => (string)dr[0] == x.ID).Single().Delete();
                     }
                     catch (Exception e)
                     {
@@ -535,7 +483,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             WorkerViewModel = null;
             string oldpath = CurrentNewPath;
             ExecuteResetCommand();
-               
+
             if (IsFolderMode)
             {
                 ReopenBaseFolder(oldpath);
@@ -546,24 +494,76 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
         }
 
+        #endregion methods
+
+        #region command methods
+
+        private void ExecuteOpenDataGridCommand(string param)
+        {
+            if (param == "DG1")
+            {
+                new DataGridWindowView(DataItems).ShowDialog();
+            }
+            else
+            {
+                new DataGridWindowView(NewDataTableforAlter).ShowDialog();
+            }
+        }
+
+        private void ExecuteOpenBaseFileCommand()
+        {
+            try
+            {
+                string folderpath = Utils.Common.GetFilePath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
+                InitializebyFile(folderpath.Substring(0, folderpath.Length - 1), NewDataTableforAlter);
+                IsSetComplete = true;
+                CurrentBase = "현재 비교: 파일";
+                IsFolderMode = false;
+                CurrentNewPath = folderpath.Substring(0, folderpath.Length - 1);
+                ReadytoReplaced = MakeModifyList(DataItems, NewDataTableforAlter);
+            }
+            catch (Exception e)
+            {
+                App.LoggerEx.Warn(e.Message);
+            }
+        }
+
+        private void ExecuteOpenBaseFolderCommand()
+        {
+            try
+            {
+                string folderpath = Utils.Common.GetFolderPath((from x in Application.Current.Windows.OfType<Window>() where x.Title == "AutoEditView" select x).First());
+                InitializebyFolder(folderpath, NewDataTableforAlter);
+                IsSetComplete = true;
+                CurrentBase = "현재 비교: 폴더";
+                IsFolderMode = true;
+                CurrentNewPath = folderpath;
+                ReadytoReplaced = MakeModifyList(DataItems, NewDataTableforAlter);
+            }
+            catch (Exception e)
+            {
+                App.LoggerEx.Warn(e.Message);
+            }
+        }
+
         private void ExecutePreviewEditCommand()
         {
-            if (LangMode != toreplace.langmode) toreplace = MakeModifyList(DataItems, NewItemsDG);
-            new PreviewView(new ObservableCollection<ReplaceModel>(toreplace.ToModelList())).ShowDialog();
+            if (LangMode != ReadytoReplaced.langmode) ReadytoReplaced = MakeModifyList(DataItems, NewDataTableforAlter);
+            new PreviewView(new ObservableCollection<ReplacePreviewItem>(ReadytoReplaced.ToModelList())).ShowDialog();
         }
 
         private void ExecuteBeginAutoEditCommand()
         {
-            if (toreplace == null)
+            if (ReadytoReplaced == null)
             {
-                toreplace = MakeModifyList(DataItems, NewItemsDG);
+                ReadytoReplaced = MakeModifyList(DataItems, NewDataTableforAlter);
             }
-            if (toreplace.replaceTable.Rows.Count <= 0)
+            if (ReadytoReplaced.replaceTable.Rows.Count <= 0)
             {
                 MessageBox.Show("수정할 사항이 존재하지 않습니다.");
                 return;
             }
-            WorkerViewModel = new AutoEditExecuteViewModel(toreplace);
+            WorkerViewModel = new AutoEditExecuteViewModel(ReadytoReplaced);
         }
 
         private void ExecuteChangeLangCommand(string param)
@@ -574,19 +574,22 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 return;
             }
             LangMode = param;
-            toreplace = MakeModifyList(DataItems, NewItemsDG);
+            ReadytoReplaced = MakeModifyList(DataItems, NewDataTableforAlter);
         }
 
         private void ExecuteResetCommand()
         {
             IsSetComplete = false;
-            NewItemsDG = new DataTable();
+            NewDataTableforAlter = new DataTable();
             CurrentBase = "현재 비교 대상 없음";
-            toreplace = null;
+            ReadytoReplaced = null;
             CurrentNewPath = "현재 선택된 대상 없음"; ;
         }
 
+        #endregion command methods
+
         #region IDisposable Support
+
         private bool disposedValue = false; // 중복 호출을 검색하려면
 
         protected virtual void Dispose(bool disposing)
@@ -595,34 +598,19 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             {
                 if (disposing)
                 {
-                    _newItemsDG.Clear();
-                    _newItemsDG.Dispose();
-                    toreplace.Dispose();
+                    _newDataTableforAlter.Clear();
+                    _newDataTableforAlter.Dispose();
+                    ReadytoReplaced.Dispose();
                 }
-
-                // TODO: 관리되지 않는 리소스(관리되지 않는 개체)를 해제하고 아래의 종료자를 재정의합니다.
-                // TODO: 큰 필드를 null로 설정합니다.
-
                 disposedValue = true;
             }
         }
 
-        // TODO: 위의 Dispose(bool disposing)에 관리되지 않는 리소스를 해제하는 코드가 포함되어 있는 경우에만 종료자를 재정의합니다.
-        // ~AutoEditViewModel() {
-        //   // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
-        //   Dispose(false);
-        // }
-
-        // 삭제 가능한 패턴을 올바르게 구현하기 위해 추가된 코드입니다.
         public void Dispose()
         {
-            // 이 코드를 변경하지 마세요. 위의 Dispose(bool disposing)에 정리 코드를 입력하세요.
             Dispose(true);
-            // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
-            // GC.SuppressFinalize(this);
         }
-        #endregion
 
-        #endregion
+        #endregion IDisposable Support
     }
 }

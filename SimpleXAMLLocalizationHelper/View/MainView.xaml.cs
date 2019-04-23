@@ -9,7 +9,8 @@ namespace SimpleXAMLLocalizationHelper.View
     /// </summary>
     public partial class MainView : UserControl
     {
-        bool isopened = false;
+        private bool isopened = false;
+
         public MainView()
         {
             InitializeComponent();
@@ -77,6 +78,5 @@ namespace SimpleXAMLLocalizationHelper.View
         {
             ResetTBScrolls();
         }
-
     }
 }

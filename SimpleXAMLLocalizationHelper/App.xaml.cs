@@ -56,7 +56,7 @@ namespace SimpleXAMLLocalizationHelper
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
 
-            SettingModel newSetting ;
+            SettingModel newSetting;
 
             try
             {
@@ -97,9 +97,9 @@ namespace SimpleXAMLLocalizationHelper
                         sw.Write(serialized);
                     }
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
-                    App.Logger.Info("마지막 로그인 시간 저장 실패 "+e.Message);
+                    App.Logger.Info("마지막 로그인 시간 저장 실패 " + e.Message);
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace SimpleXAMLLocalizationHelper
                 {
                     sw.Write(defaultSetting.ToString());
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     App.Logger.Info("기본 설정 저장 실패 " + e.Message);
                 }

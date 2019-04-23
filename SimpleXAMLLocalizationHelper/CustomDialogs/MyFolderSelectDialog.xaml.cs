@@ -1,19 +1,9 @@
-﻿using System;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using Microsoft.WindowsAPICodePack.Dialogs;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Microsoft.WindowsAPICodePack.Shell;
 using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Input;
 
 namespace SimpleXAMLLocalizationHelper.CustomDialogs
 {
@@ -22,7 +12,6 @@ namespace SimpleXAMLLocalizationHelper.CustomDialogs
     /// </summary>
     public partial class MyFolderSelectDialog : Window, IDisposable
     {
-
         //
         // 요약:
         //     Gets or sets a value that determines whether the user can select folders or files.
@@ -31,11 +20,12 @@ namespace SimpleXAMLLocalizationHelper.CustomDialogs
 
         public string FileName
         {
-            get;set;
+            get; set;
         }
 
         public ObservableCollection<KeyValuePair<string, string>> Favorites = new ObservableCollection<KeyValuePair<string, string>>();
         public KeyValuePair<string, string> selected = new KeyValuePair<string, string>();
+
         public MyFolderSelectDialog()
         {
             Favorites = new ObservableCollection<KeyValuePair<string, string>>(App.Favorites);
@@ -84,6 +74,7 @@ namespace SimpleXAMLLocalizationHelper.CustomDialogs
         }
 
         #region IDisposable Support
+
         private bool disposedValue = false; // 중복 호출을 검색하려면
 
         protected virtual void Dispose(bool disposing)
@@ -116,6 +107,7 @@ namespace SimpleXAMLLocalizationHelper.CustomDialogs
             // TODO: 위의 종료자가 재정의된 경우 다음 코드 줄의 주석 처리를 제거합니다.
             // GC.SuppressFinalize(this);
         }
-        #endregion
+
+        #endregion IDisposable Support
     }
 }

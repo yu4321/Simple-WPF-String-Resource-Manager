@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace SimpleXAMLLocalizationHelper.CustomDialogs
 {
@@ -22,6 +10,7 @@ namespace SimpleXAMLLocalizationHelper.CustomDialogs
         public string key;
         public string value;
         public bool result = false;
+
         public AddFavoriteDialog(string param)
         {
             value = param;

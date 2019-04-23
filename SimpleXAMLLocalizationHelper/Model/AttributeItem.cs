@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using System.Xml.Linq;
 
 namespace SimpleXAMLLocalizationHelper.Model
@@ -54,12 +49,11 @@ namespace SimpleXAMLLocalizationHelper.Model
 
         public override string ToString()
         {
-            if(Name!=null && Content != null)
+            if (Name != null && Content != null)
             {
                 return $"{Name} | {Content}";
             }
             return base.ToString();
         }
-
     }
 }

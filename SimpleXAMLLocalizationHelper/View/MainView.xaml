@@ -6,8 +6,7 @@
              xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
              xmlns:local="clr-namespace:SimpleXAMLLocalizationHelper.View"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="1320" Background="#FFE2E2E2"
-             >
+             d:DesignHeight="450" d:DesignWidth="1320" Background="#FFE2E2E2">
     <UserControl.Resources>
         <ControlTemplate x:Key="InputBoxTemplate" TargetType="Button">
             <Grid Width="260" Height="38" Margin="0,5">
@@ -31,18 +30,18 @@
             <ColumnDefinition Width="320" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" x:Name="c1_dataDisplay" ShowGridLines="True">
-            <DataGrid x:Name="DG" HorizontalAlignment="Left" Margin="10,29,0,10" VerticalAlignment="Top" MinHeight="399" MinWidth="661" ItemsSource="{Binding DataItems, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" MinColumnWidth="100" SelectedItem="{Binding nowindex}">
+            <DataGrid x:Name="DG" HorizontalAlignment="Left" Margin="10,29,0,10" VerticalAlignment="Top" MinHeight="399" MinWidth="661" ItemsSource="{Binding MainDataTable, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" MinColumnWidth="100" SelectedItem="{Binding CurrentDataGridRow}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding ClickCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </DataGrid>
-            <Button Content="정렬 복구" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="75" Click="DataGridSortReset"/>
-            <Button Content=" 자동 편집기 열기 " HorizontalAlignment="Left" Margin="95,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding OpenAutoEditCommand}"/>
+            <Button Content="정렬 복구" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" Width="75" Click="DataGridSortReset" />
+            <Button Content=" 자동 편집기 열기 " HorizontalAlignment="Left" Margin="95,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding OpenAutoEditCommand}" />
             <TextBox x:Name="TB1" Text="{Binding CurrentFolderPath,FallbackValue=현재 선택된 폴더 없음}" IsReadOnly="True" HorizontalAlignment="Left" Margin="205,8,0,0" VerticalAlignment="Top" Padding="1" Width="302" Height="20" IsReadOnlyCaretVisible="True" TextChanged="TextChanged" HorizontalContentAlignment="Left" VerticalContentAlignment="Center" />
-            <Button Content=" 즐겨찾기 등록 " HorizontalAlignment="Left" Margin="512,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding AddFavoriteCommand}"/>
-            <Button Content=" 새로 열기 " HorizontalAlignment="Left" Margin="606,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding OpenFolderSelectCommand}"/>
+            <Button Content=" 즐겨찾기 등록 " HorizontalAlignment="Left" Margin="512,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding AddFavoriteCommand}" />
+            <Button Content=" 새로 열기 " HorizontalAlignment="Left" Margin="606,8,0,0" VerticalAlignment="Top" Width="Auto"  Command="{Binding OpenFolderSelectCommand}" />
         </Grid>
         <Grid Grid.Column="1" VerticalAlignment="Bottom" x:Name="c2_Utils">
             <ListView HorizontalAlignment="Center" VerticalAlignment="Top" Height="212" Margin="10,33,12,0" Width="298" ItemsSource="{Binding InputBoxes}" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False">
@@ -61,8 +60,7 @@
             <Label Visibility="Hidden" Content="추가 리소스는 공백문이 있으면 xml:space=&quot;preserve&quot;를 추가합니다." HorizontalAlignment="Left" Margin="0,415,0,0" VerticalAlignment="Top" Height="25" Width="320" FontSize="10" IsEnabled="False" />
             <CheckBox x:Name="checkBox" Content="어트리뷰트 사용" HorizontalAlignment="Left" Margin="120,10,0,0" VerticalAlignment="Top" IsChecked="{Binding IsAttrsUsing}" Click="checkBox_Click" />
             <Button x:Name="btn_addattr" Content=">>>>" HorizontalAlignment="Right" Margin="0,8,10,0" VerticalAlignment="Top" Width="75" Click="OpenandCloseAttributePage" IsEnabled="{Binding IsAttrsUsing}" />
-            <Button x:Name="btn_back" Content="돌아가기" HorizontalAlignment="Right" Margin="10,8,10,8" VerticalAlignment="Bottom" Width="75" Command="{Binding HomeCommand}"/>
-
+            <Button x:Name="btn_back" Content="돌아가기" HorizontalAlignment="Right" Margin="10,8,10,8" VerticalAlignment="Bottom" Width="75" Command="{Binding HomeCommand}" />
         </Grid>
         <Grid Grid.Column="2" x:Name="c3_attrmanage">
             <Grid.RowDefinitions>
@@ -71,30 +69,30 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <DataGrid x:Name="dataGrida1" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="185" Width="210" ItemsSource="{Binding ItemsA1, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" MinColumnWidth="100" AutoGenerateColumns="False" SelectedItem="{Binding nowindex_a1}" CanUserSortColumns="False">
+                <DataGrid x:Name="dataGrida1" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="185" Width="210" ItemsSource="{Binding AttributeCollectionUpper, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" MinColumnWidth="100" AutoGenerateColumns="False" SelectedItem="{Binding CurrentAttributeUpperSelected}" CanUserSortColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="보유 어트리뷰트" Binding="{Binding Content}" />
                     </DataGrid.Columns>
                     <DataGrid.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Blue"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Blue" />
                     </DataGrid.Resources>
                 </DataGrid>
-                <Button x:Name="buttona1" Content="삭제" HorizontalAlignment="Left" Margin="10,91,0,0" VerticalAlignment="Top" Width="75" Command="{Binding DeleteCommandA1}"/>
+                <Button x:Name="buttona1" Content="삭제" HorizontalAlignment="Left" Margin="10,91,0,0" VerticalAlignment="Top" Width="75" Command="{Binding DeleteCommandA1}" />
             </Grid>
             <Grid Grid.Row="1">
-                <Button Content="복사▲" HorizontalAlignment="Left" Margin="102,10,0,0" VerticalAlignment="Top" Width="78" Height="23" Command="{Binding AddCommandA1}"/>
-                <!--<Button Content="복사▼" HorizontalAlignment="Left" Margin="232,10,0,0" VerticalAlignment="Top" Width="78" Height="23" Command="{Binding AddCommandA2}" Visibility="Collapsed"/>-->
+                <Button Content="복사▲" HorizontalAlignment="Left" Margin="102,10,0,0" VerticalAlignment="Top" Width="78" Height="23" Command="{Binding AddCommandA1}" />
+                <!--<Button Content="복사▼" HorizontalAlignment="Left" Margin="232,10,0,0" VerticalAlignment="Top" Width="78" Height="23" Command="{Binding AddCommandA2}" Visibility="Collapsed" />-->
             </Grid>
             <Grid Grid.Row="2">
-                <DataGrid x:Name="dataGrida2" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="185" Width="210" ItemsSource="{Binding ItemsA2, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" MinColumnWidth="100" AutoGenerateColumns="False" SelectedItem="{Binding nowindex_a2}" CanUserSortColumns="False">
+                <DataGrid x:Name="dataGrida2" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="185" Width="210" ItemsSource="{Binding AttributeCollectionUtter, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" MinColumnWidth="100" AutoGenerateColumns="False" SelectedItem="{Binding CurrentAttributeUtterSelected}" CanUserSortColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="주입 가능 어트리뷰트" Binding="{Binding Content}" />
                     </DataGrid.Columns>
                     <DataGrid.Resources>
-                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Blue"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Blue" />
                     </DataGrid.Resources>
                 </DataGrid>
-                <Button x:Name="buttona2" Content="삭제" HorizontalAlignment="Left" Margin="10,91,0,0" VerticalAlignment="Top" Width="75" Command="{Binding AddCommandA2}" Visibility="Hidden"/>
+                <!--<Button x:Name="buttona2" Content="삭제" HorizontalAlignment="Left" Margin="10,91,0,0" VerticalAlignment="Top" Width="75" Command="{Binding AddCommandA2}" Visibility="Hidden" />-->
             </Grid>
         </Grid>
     </Grid>

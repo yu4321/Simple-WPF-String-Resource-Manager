@@ -1,8 +1,6 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using SimpleXAMLLocalizationHelper.CustomDialogs;
-using SimpleXAMLLocalizationHelper.Model;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -118,7 +116,7 @@ namespace SimpleXAMLLocalizationHelper.Utils
             return result;
         }
 
-        public static bool AddElementwithDefaultKey(string ResourcePath, string location, string newID, string newvalue, ref XDocument xd, List<XAttribute> attributes=null)
+        public static bool AddElementwithDefaultKey(string ResourcePath, string location, string newID, string newvalue, ref XDocument xd, List<XAttribute> attributes = null)
         {
             bool result = false;
             XElement addplace;

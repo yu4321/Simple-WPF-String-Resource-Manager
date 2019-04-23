@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace SimpleXAMLLocalizationHelper.Model
 {
@@ -11,7 +6,6 @@ namespace SimpleXAMLLocalizationHelper.Model
     {
         private string _language;
         private string _content;
-
 
         public string Language
         {
@@ -40,6 +34,7 @@ namespace SimpleXAMLLocalizationHelper.Model
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         public void RaisePropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
@@ -47,6 +42,5 @@ namespace SimpleXAMLLocalizationHelper.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-
     }
 }

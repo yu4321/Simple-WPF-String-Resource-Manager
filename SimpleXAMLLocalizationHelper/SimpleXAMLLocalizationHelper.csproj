@@ -15,6 +15,7 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>게시\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,7 +28,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -118,7 +118,7 @@
     <Compile Include="Messages\ReplaceSelectedMessage.cs" />
     <Compile Include="Model\Global.cs" />
     <Compile Include="Model\LanguageBoxItem.cs" />
-    <Compile Include="Model\ReplaceModel.cs" />
+    <Compile Include="Model\ReplacePreviewItem.cs" />
     <Compile Include="Model\SettingModel.cs" />
     <Compile Include="Utils\Common.cs" />
     <Compile Include="Messages\GotoPageMessage.cs" />

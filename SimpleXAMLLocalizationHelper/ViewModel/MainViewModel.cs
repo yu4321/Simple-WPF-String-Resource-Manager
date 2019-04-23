@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Messaging;
-using Microsoft.Practices.ServiceLocation;
 using SimpleXAMLLocalizationHelper.Messages;
 using System;
 using System.Diagnostics;
@@ -38,7 +37,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             App.Logger.Info("\n*******************************************************************");
             App.Logger.Info("실행 - " + DateTime.Now.ToString());
             App.Logger.Info("*******************************************************************\n");
-            Messenger.Default.Register<GotoPageMessage>(this,(x)=>ReceivePageChangeMessage(x));
+            Messenger.Default.Register<GotoPageMessage>(this, (x) => ReceivePageChangeMessage(x));
         }
 
         private void ReceivePageChangeMessage(GotoPageMessage action)
@@ -48,16 +47,19 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                 case PageName.Start:
                     CurrentViewModel = new StartViewModel();
                     break;
+
                 case PageName.Core:
                     var temp = new CoreViewModel();
-                    if (temp.DataItems.Columns.Count > 0)
+                    if (temp.MainDataTable.Columns.Count > 0)
                     {
                         CurrentViewModel = temp;
                     }
                     break;
+
                 case PageName.History:
                     Process.Start("notepad.exe", "logs/" + System.Reflection.Assembly.GetEntryAssembly().GetName().Name + ".log");
                     break;
+
                 case PageName.Setting:
                     Process.Start("notepad.exe", "Setting.json");
                     break;
