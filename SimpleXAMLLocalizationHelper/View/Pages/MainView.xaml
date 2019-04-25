@@ -30,7 +30,7 @@
             <ColumnDefinition Width="320" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" x:Name="c1_dataDisplay" ShowGridLines="True">
-            <DataGrid x:Name="DG" HorizontalAlignment="Left" Margin="10,29,0,10" VerticalAlignment="Top" MinHeight="399" MinWidth="661" ItemsSource="{Binding MainDataTable, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" MinColumnWidth="100" SelectedItem="{Binding CurrentDataGridRow}">
+            <DataGrid x:Name="DG" HorizontalAlignment="Left" Margin="10,29,0,10" ColumnWidth="*" VerticalAlignment="Top" MinHeight="399" MinWidth="661" ItemsSource="{Binding MainDataTable, UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" SelectedItem="{Binding CurrentDataGridRow}">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="MouseDoubleClick">
                         <i:InvokeCommandAction Command="{Binding ClickCommand}" />

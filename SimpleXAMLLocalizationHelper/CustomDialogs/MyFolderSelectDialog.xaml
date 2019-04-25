@@ -6,7 +6,7 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:SimpleXAMLLocalizationHelper.CustomDialogs"
         mc:Ignorable="d"
-        Title="FolderSelectDialog" Height="317.094" Width="374.359">
+        Title="FolderSelectDialog" Height="317.094" Width="374.359" ResizeMode="CanResizeWithGrip">
     <Grid>
         <ListBox x:Name="listBox" HorizontalAlignment="Left" Height="245" Margin="20,31,0,0" VerticalAlignment="Top" Width="234" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.HorizontalScrollBarVisibility="Visible">
             <ListBox.ItemContainerStyle>

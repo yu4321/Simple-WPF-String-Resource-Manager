@@ -10,6 +10,6 @@
         ResizeMode="NoResize"
         Height="460" Width="700">
     <Grid>
-        <DataGrid x:Name="DG" Height="399" Width="661" Margin="10" VerticalAlignment="Center" HorizontalAlignment="Center" MaxHeight="399" MaxWidth="661" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" MinColumnWidth="100" />
+        <DataGrid x:Name="DG" Height="399" Width="661" Margin="10" ColumnWidth="*" VerticalAlignment="Center" HorizontalAlignment="Center" MaxHeight="399" MaxWidth="661" IsReadOnly="True" AutoGenerateColumns="True" CanUserSortColumns="True" CanUserReorderColumns="False" />
     </Grid>
 </Window>

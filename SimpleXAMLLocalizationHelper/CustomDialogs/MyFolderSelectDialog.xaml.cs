@@ -23,7 +23,7 @@ namespace SimpleXAMLLocalizationHelper.CustomDialogs
             get; set;
         }
 
-        public ObservableCollection<KeyValuePair<string, string>> Favorites = new ObservableCollection<KeyValuePair<string, string>>();
+        public ObservableCollection<KeyValuePair<string, string>> Favorites { get; set; } = new ObservableCollection<KeyValuePair<string, string>>();
         public KeyValuePair<string, string> selected = new KeyValuePair<string, string>();
 
         public MyFolderSelectDialog()

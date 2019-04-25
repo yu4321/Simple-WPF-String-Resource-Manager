@@ -67,11 +67,10 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             System.GC.Collect();
         }
 
-        ////public override void Cleanup()
-        ////{
-        ////    // Clean up if needed
+        public override void Cleanup()
+        {
 
-        ////    base.Cleanup();
-        ////}
+            base.Cleanup();
+        }
     }
 }

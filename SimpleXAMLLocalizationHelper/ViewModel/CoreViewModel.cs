@@ -482,6 +482,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
 
         private void ExecuteClickCommand()
         {
+            if (CurrentDataGridRow == null) return;
             ID = (string)CurrentDataGridRow["ID"];
             for (int i = 0; i < App.LanguageList.Count; i++)
             {
@@ -596,6 +597,7 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
         private void ExecuteAddFavoriteCommand()
         {
             var dialog = new AddFavoriteDialog(CurrentFolderPath);
+            dialog.Title = "즐겨찾기할 항목의 이름을 입력해주세요.";
             dialog.ShowDialog();
             bool result = dialog.result;
             if (result)

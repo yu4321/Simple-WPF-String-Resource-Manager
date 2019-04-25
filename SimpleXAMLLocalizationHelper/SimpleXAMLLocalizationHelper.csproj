@@ -133,22 +133,22 @@
     <Compile Include="ViewModel\CoreViewModel.cs" />
     <Compile Include="ViewModel\StartViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
-    <Compile Include="View\AutoEditExecuteView.xaml.cs">
+    <Compile Include="View\Pages\AutoEditExecuteView.xaml.cs">
       <DependentUpon>AutoEditExecuteView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\AutoEditView.xaml.cs">
+    <Compile Include="View\Windows\AutoEditView.xaml.cs">
       <DependentUpon>AutoEditView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\DataGridWindowView.xaml.cs">
+    <Compile Include="View\Windows\DataGridWindowView.xaml.cs">
       <DependentUpon>DataGridWindowView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\MainView.xaml.cs">
+    <Compile Include="View\Pages\MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\PreviewView.xaml.cs">
+    <Compile Include="View\Windows\PreviewView.xaml.cs">
       <DependentUpon>PreviewView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\StartView.xaml.cs">
+    <Compile Include="View\Pages\StartView.xaml.cs">
       <DependentUpon>StartView.xaml</DependentUpon>
     </Compile>
     <Page Include="CustomDialogs\AddFavoriteDialog.xaml">
@@ -171,27 +171,27 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="View\AutoEditExecuteView.xaml">
+    <Page Include="View\Pages\AutoEditExecuteView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\AutoEditView.xaml">
+    <Page Include="View\Windows\AutoEditView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\DataGridWindowView.xaml">
+    <Page Include="View\Windows\DataGridWindowView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\MainView.xaml">
+    <Page Include="View\Pages\MainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\PreviewView.xaml">
+    <Page Include="View\Windows\PreviewView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\StartView.xaml">
+    <Page Include="View\Pages\StartView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

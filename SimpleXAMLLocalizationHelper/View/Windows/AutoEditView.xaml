@@ -26,7 +26,7 @@
                 <Button VerticalAlignment="Top" HorizontalAlignment="Right" Content="크게 보기" Margin="0,0,20,0" Command="{Binding OpenDataGridCommand}" CommandParameter="DG1" />
                 <DataGrid Margin="10,25,20,20" ItemsSource="{Binding DataItems, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" CanUserSortColumns="True" CanUserReorderColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
+                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="*" />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>
@@ -35,7 +35,7 @@
                 <Button VerticalAlignment="Top" HorizontalAlignment="Right" Content="크게 보기" Margin="0,0,20,0" Command="{Binding OpenDataGridCommand}" IsEnabled="{Binding IsSetComplete}" CommandParameter="DG2" />
                 <DataGrid Margin="10,25,20,20" ItemsSource="{Binding NewDataTableforAlter, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="False" CanUserSortColumns="True" CanUserReorderColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" />
+                        <DataGridTextColumn Header="ID" Binding="{Binding ID}" Width="*"  />
                     </DataGrid.Columns>
                 </DataGrid>
             </Grid>

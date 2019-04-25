@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SimpleXAMLLocalizationHelper.CustomDialogs"
         mc:Ignorable="d"
         Title="AddFavoriteDialog" Height="185.47" Width="286.325"
-        ResizeMode="NoResize">
+        ResizeMode="CanResizeWithGrip">
     <Grid>
         <Grid Margin="20,20,20,36">
             <Grid.RowDefinitions>
