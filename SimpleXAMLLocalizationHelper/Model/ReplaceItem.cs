@@ -150,9 +150,31 @@ namespace SimpleXAMLLocalizationHelper.Model
                 {
                     for (int i = 0; i < originalTable.Rows.Count; i++)
                     {
+                        bool isaddmode = false;
                         var curorgitem = originalTable.Rows[i];
-                        var currepitem = replaceTable.Rows[i];
-                        string orgrep = (string)curorgitem[langmode];
+                        var currepitem = originalTable.Rows[i];
+                        var temp = replaceTable.AsEnumerable().Where(x => (string)x[0] == (string)curorgitem[0]);
+                        if (temp.Count() > 0)
+                        {
+                            currepitem = temp.First();
+                        }
+                        else
+                        {
+                            try
+                            {
+                                currepitem = toAddTable.AsEnumerable().Where(x => (string)x[0] == (string)curorgitem[0]).Single();
+                                isaddmode = true;
+                            }
+                            catch
+                            {
+                                continue;
+                            }
+                        }
+                        string orgrep = "";
+                        if (!(curorgitem[langmode] is DBNull))
+                        {
+                            orgrep = (string)curorgitem[langmode];
+                        }
                         string reprep = (string)currepitem["NewItem"];
 
                         if (orgrep.Length > 0 && reprep.Length > 0)
@@ -168,6 +190,10 @@ namespace SimpleXAMLLocalizationHelper.Model
                             //result += string.Format("), Change {0} to {1}\n\n", orgrep, reprep);
                             item.OldValue = orgrep;
                             item.NewValue = reprep;
+                            if (isaddmode)
+                            {
+                                item.IsAdd = true;
+                            }
                             result.Add(item);
                         }
                     }

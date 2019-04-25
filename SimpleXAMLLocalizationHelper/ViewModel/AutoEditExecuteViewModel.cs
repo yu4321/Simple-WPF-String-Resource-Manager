@@ -188,6 +188,34 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
             }
             else
             {
+                for (int i = 0; i < workList.toAddTable.Rows.Count; i++)
+                {
+                    DataRow rep = workList.toAddTable.Rows[i];
+                    DataRow org = null;
+                    try
+                    {
+                        org = workList.originalTable.AsEnumerable().Where(x => (string)x[0] == (string)rep[0]).Single();
+                        XDocument xDoc = null;
+                        AddElementwithDefaultKey(workList.orgpath, workList.langmode, (string)org["ID"], (string)rep["NewItem"], ref xDoc);
+                        if(org[workList.langmode] is DBNull)
+                        {
+                            org[workList.langmode] = (string)rep["NewItem"];
+                        }
+                        Progress++;
+                        ReplaceCarriageReturns_XDoc(ref xDoc);
+                        SaveFileFullPath(workList.orgpath, workList.langmode, xDoc.ToString());
+                        Progress++;
+                        string logtext = string.Format("저장 성공 {0}/{1}.xaml ID: {2}에 {3} 추가.", workList.orgpath, workList.langmode, (string)org["ID"], (string)rep["NewItem"]);
+                        App.Logger.Info(logtext);
+                        Log += logtext + "\n";
+                    }
+                    catch (Exception e)
+                    {
+                        Log += string.Format("추가 실패 {0} - {1} \n", org["ID"], e.Message);
+                        App.Logger.Warn(string.Format("추가 실패 {0} {1} - {2} \n", workList.langmode, org["ID"], e.Message));
+                    }
+                }
+
                 for (int i = 0; i < workList.replaceTable.Rows.Count; i++)
                 {
                     DataRow org = workList.originalTable.Rows[i];

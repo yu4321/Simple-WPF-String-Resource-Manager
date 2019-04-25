@@ -414,9 +414,27 @@ namespace SimpleXAMLLocalizationHelper.ViewModel
                         }
                         else
                         {
-                            if (next["NewItem"] != null)
+                            try
                             {
-                                if ((string)next["NewItem"] != (string)i[LangMode]) isoktoadd = true;
+                                isoktoadd = false;
+                                if(i[LangMode] is DBNull && !(next["NewItem"] is DBNull))
+                                {
+                                    willbeadded = true;
+                                }
+                                else
+                                {
+                                    if (!(next["NewItem"] is DBNull))
+                                    {
+                                        if ((string)next["NewItem"] != (string)i[LangMode])
+                                        {
+                                            isoktoadd = true;
+                                        }
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                                isoktoadd = false;
                             }
                         }
 
